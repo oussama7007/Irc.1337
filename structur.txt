@@ -2,7 +2,7 @@ ft_irc/
 │
 ├── Makefile
 ├── include/
-│   ├── Server.hpp
+│   ├── Server.hpp  
 │   ├── Client.hpp
 │   ├── Channel.hpp
 │   ├── Command.hpp
