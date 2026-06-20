@@ -5,6 +5,26 @@
 
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+
+#include <cstdlib>
+#include <cstring>
+
+#include <unistd.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include <poll.h>
+
+#include <fcntl.h>
+
+#include <iostream>
 
 class  Server 
 {
@@ -16,5 +36,5 @@ class  Server
         Server(int port, std::string password);
         ~Server();
 
-         void start();
-}
+        void start();
+};

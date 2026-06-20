@@ -13,7 +13,7 @@ ft_irc/
 │   ├── main.cpp
 │   │
 │   ├── server/
-│   │   ├── Server.cpp
+│   │   ├── Server.cpp 
 │   │   ├── Socket.cpp
 │   │   └── PollManager.cpp
 │   │
