@@ -1,1 +1,51 @@
-# Irc.1337
+
+
+### Socket programming 
+    in C++ allows programs to communicate over a network by sending and receiving data packets
+
+
+
+ft_irc/
+│
+├── Makefile
+├── include/
+│   ├── Server.hpp
+│   ├── Client.hpp
+│   ├── Channel.hpp
+│   ├── Command.hpp
+│   ├── Parser.hpp
+│   └── Utils.hpp
+│
+├── src/
+│   ├── main.cpp
+│   │
+│   ├── server/
+│   │   ├── Server.cpp
+│   │   ├── Socket.cpp
+│   │   └── PollManager.cpp
+│   │
+│   ├── client/
+│   │   └── Client.cpp
+│   │
+│   ├── channel/
+│   │   └── Channel.cpp
+│   │
+│   ├── commands/
+│   │   ├── Pass.cpp
+│   │   ├── Nick.cpp
+│   │   ├── User.cpp
+│   │   ├── Join.cpp
+│   │   ├── Part.cpp
+│   │   ├── Privmsg.cpp
+│   │   ├── Kick.cpp
+│   │   ├── Invite.cpp
+│   │   ├── Topic.cpp
+│   │   └── Mode.cpp
+│   │
+│   ├── parser/
+│   │   └── Parser.cpp
+│   │
+│   └── utils/
+│       └── Utils.cpp
+│
+└── tests/
