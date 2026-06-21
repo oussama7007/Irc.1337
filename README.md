@@ -1,6 +1,6 @@
-
-
-# Socket programming 
+# IRC 
+(Internet Relay Chat) is a text-based communication protocol used for real-time chatting over the Internet.
+## Socket programming 
 in C++ allows programs to communicate over a network by sending and receiving data packets
 
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
