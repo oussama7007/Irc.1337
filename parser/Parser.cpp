@@ -24,16 +24,13 @@ Message Parser::parse(const std::string &raw_line)
     if (trailing_pos != std::string::npos)
     {
         has_trailing = true;
-        // النصف الأول: من البداية وحتى ما قبل " :"
+       
         base_part = line.substr(0, trailing_pos);
-        // النصف الثاني: ما بعد " :" وحتى نهاية السطر
+       
         trailing_part = line.substr(trailing_pos + 2);
     }
 
-    // للتحقق المؤقت (يمكنك مسح هذا السطر لاحقاً):
-    // std::cout << "Base: [" << base_part << "] | Trailing: [" << trailing_part << "]\n";
 
-    // --- في الخطوة القادمة سنقوم بتفكيك base_part إلى أوامر ومعاملات ---
 
     return msg;
 }
