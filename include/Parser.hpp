@@ -20,6 +20,6 @@ struct Message
 class Parser 
 {
     public:
-    static Message parse(const std::string &raw_line);
+        static Message parse(const std::string &raw_line);
 }
 
