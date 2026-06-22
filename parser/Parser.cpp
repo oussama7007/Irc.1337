@@ -29,7 +29,13 @@ Message Parser::parse(const std::string &raw_line)
        
         trailing_part = line.substr(trailing_pos + 2);
     }
+    std::stringstream ss(base_part);
+    std::string word;
 
+    if(ss >> word)
+    {
+        
+    }
 
 
     return msg;
