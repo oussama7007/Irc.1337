@@ -15,6 +15,9 @@ class Channel
         std::vector<Client*> members;
         std::vector<Client*> operators; // admins 
 
-        bool    isInviteOnly;
-        bool topicRestricted 
+        bool    isInviteOnly; // mode +i 
+        bool    topicRestricted  // mode +t 
+        size_t                  userLimit; // mode +k
+        std::string             password; // mode +l
+        bool 
 }
