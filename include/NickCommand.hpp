@@ -4,12 +4,11 @@
 #include <vector>
 #include <string>
 
-class JoinCommand : public Command
+class NickCommand : public Command
 {
     public:
-        JoinCommand();
-        ~JoinCommand();
+        NickCommand();
+        ~NickCommand();
         
-     
         void execute(Server &server, Client &client, const std::vector<std::string> &params);
 };

@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-
+#include "JoinCommand.hpp"
 Server::Server(int port, const std::string &password)
     : _listenFd(-1), _port(port), _password(password) {}
 
