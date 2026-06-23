@@ -31,6 +31,11 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
 
     client.setNickname(newNick);
     client.setNickSet(true);
+    
+    if (client.isRegistered())
+    {
+        client.sendMessage(":server 001 " + client.getNickname() + " :Welcome to the ft_irc Network, " + client.getNickname() + "!" + client.getUsername() + "@localhost\r\n");
+    }
 
 }
 
