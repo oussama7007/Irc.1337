@@ -39,8 +39,10 @@ void Channel::removeMember(Client *client)
     {
         _members.erase(it);
     }
-    
-    removeOperator(client);
+    if (isOperator(client))
+    {
+        removeOperator(client);
+    }
 }
 
 void Channel::addOperator(Client *client)
@@ -57,5 +59,17 @@ void Channel::removeOperator(Client *client)
     if (it != _operators.end())
     {
         _operators.erase(it);
+    }
+}
+
+void Channel::broadcastMessage(const std::string &message, Client *sender)
+{
+ 
+    for (size_t i = 0; i < _members.size(); ++i)
+    {
+
+        if (_members[i] == sender) // bach khouna li sift message man3awedch nsift lih message nskipih
+            continue;
+        _members[i]->sendMessage(message);
     }
 }
