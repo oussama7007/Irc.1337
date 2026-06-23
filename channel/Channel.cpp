@@ -72,4 +72,22 @@ void Channel::broadcastMessage(const std::string &message, Client *sender)
             continue;
         _members[i]->sendMessage(message);
     }
+
+}
+bool Channel::isInvited(Client *client) const
+{
+    return std::find(_invitedClients.begin(), _invitedClients.end(), client) != _invitedClients.end();
+}
+
+void Channel::addInvited(Client *client)
+{
+    if (!isInvited(client))
+        _invitedClients.push_back(client);
+}
+
+void Channel::removeInvited(Client *client)
+{
+    std::vector<Client*>::iterator it = std::find(_invitedClients.begin(), _invitedClients.end(), client);
+    if (it != _invitedClients.end())
+        _invitedClients.erase(it);
 }

@@ -41,4 +41,8 @@ class Channel
         bool        isOperator(Client *client) const;
         
         void        broadcastMessage(const std::string &message, Client *sender = NULL);// khass message itsafet l ga3 members, null bach message maywselch joj merat l nafs chakhes  
+
+        bool isInvited(Client *client) const;
+        void addInvited(Client *client);
+        void removeInvited(Client *client);
 };
