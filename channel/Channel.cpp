@@ -91,3 +91,11 @@ void Channel::removeInvited(Client *client)
     if (it != _invitedClients.end())
         _invitedClients.erase(it);
 }
+
+void Channel::setInviteOnly(bool mode) { _isInviteOnly = mode; }
+void Channel::setTopicRestricted(bool mode) { _topicRestricted = mode; }
+void Channel::setPassword(const std::string &password) { _password = password; }
+void Channel::setUserLimit(size_t limit) { _userLimit = limit; }
+
+bool Channel::isInviteOnly() const { return _isInviteOnly; }
+bool Channel::isTopicRestricted() const { return _topicRestricted; }

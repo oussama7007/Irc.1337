@@ -45,4 +45,12 @@ class Channel
         bool isInvited(Client *client) const;
         void addInvited(Client *client);
         void removeInvited(Client *client);
+
+        void setInviteOnly(bool mode);
+        void setTopicRestricted(bool mode);
+        void setPassword(const std::string &password);
+        void setUserLimit(size_t limit);
+
+        bool isInviteOnly() const;
+        bool isTopicRestricted() const;
 };
