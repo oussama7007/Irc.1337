@@ -32,7 +32,7 @@ Message Parser::parse(const std::string &raw_line)
     std::stringstream ss(base_part);
     std::string word;
 
-    // ila kant : f lewel donc hadac kaysema prefix ":nick!user@host PRIVMSG #channel :Hello"
+    // ila kant ":" f lewel donc hadac kaysema prefix ":nick!user@host PRIVMSG #channel :Hello"
         // Prefix  = nick!user@host
         // Command = PRIVMSG
         // Target  = #channel
