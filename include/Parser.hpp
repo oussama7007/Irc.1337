@@ -2,7 +2,7 @@
 
 
 
-#paragma once 
+#pragma once 
 
 
 #include <string>
@@ -21,5 +21,5 @@ class Parser
 {
     public:
         static Message parse(const std::string &raw_line);
-}
+};
 

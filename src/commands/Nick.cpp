@@ -13,7 +13,7 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    std::string newNick = params;
+    std::string newNick = params[0];
 
     if (server.findClientByNick(newNick) != NULL)
     {

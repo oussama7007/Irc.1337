@@ -1,6 +1,6 @@
-#include "include/Parser.hpp"
+#include "../include/Parser.hpp"
 #include <iostream>
-
+#include <sstream>
 Message Parser::parse(const std::string &raw_line)
 {
     Message msg;
@@ -14,7 +14,6 @@ Message Parser::parse(const std::string &raw_line)
     //ignori empty line
     if (line.empty()) return msg;
 
-   
     std::string base_part = line;
     std::string trailing_part = "";
     bool has_trailing = false;
@@ -33,27 +32,27 @@ Message Parser::parse(const std::string &raw_line)
     std::string word;
 
     // ila kant ":" f lewel donc hadac kaysema prefix ":nick!user@host PRIVMSG #channel :Hello"
-        // Prefix  = nick!user@host
-        // Command = PRIVMSG
-        // Target  = #channel
-        // Message = Hello
-    
     if(ss >> word)
     {
-        if(word == ':' )
+        if(word[0] == ':' ) 
         {
             msg.prefix = word.substr(1);
             if(ss >> word)
                 msg.command = word;
         }
-        else // ila makantch ta chi : f lewel donc rah direct rah command 
-            msg.command
+        else 
+        {
+            msg.command = word; 
+        }
+        
         // ne9raw dok l words lib9aw as parameters 
         while(ss >> word)
             msg.params.push_back(word);
-        // flekher ila kan chi text kanzidouh  as parameter
+            
+        // flekher ila kan chi text kanzidouh as parameter
         if(has_trailing)
             msg.params.push_back(trailing_part);
+            
         return msg;
     }
 

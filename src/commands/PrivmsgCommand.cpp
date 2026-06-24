@@ -19,12 +19,12 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
         return;
     }
 
-    std::string target = params;
+    std::string target = params[0];
     std::string message = params[1];
 
     std::string msgToSend = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PRIVMSG " + target + " :" + message + "\r\n";
 
-    if (target == '#')
+    if (target[0] == '#')
     {
         Channel *channel = server.findChannel(target);
         

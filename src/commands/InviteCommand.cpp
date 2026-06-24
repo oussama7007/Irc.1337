@@ -14,7 +14,7 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
         return;
     }
 
-    std::string targetNick = params;
+    std::string targetNick = params[0];
     std::string channelName = params[1];
 
     Client *targetClient = server.findClientByNick(targetNick);

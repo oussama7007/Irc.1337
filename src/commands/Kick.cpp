@@ -14,7 +14,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    std::string channelName = params;
+    std::string channelName = params[0];
     std::string targetNick = params[1];
     
     std::string reason = "No reason given";

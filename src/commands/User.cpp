@@ -7,6 +7,7 @@ UserCommand::~UserCommand() {}
 
 void UserCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
+    (void)server;
     if (client.isRegistered() || client.getUsername() != "")
     {
         client.sendMessage(":server 462 " + client.getNickname() + " :You may not reregister\r\n");
@@ -19,7 +20,7 @@ void UserCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    client.setUsername(params);
+    client.setUsername(params[0]);
     client.setUserSet(true);
 
     if (client.isRegistered())

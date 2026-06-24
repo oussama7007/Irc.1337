@@ -1,5 +1,5 @@
 // src/client/Client.cpp  [PARTNER'S PART — placeholder]
-#include "include/Client.hpp"
+#include "../include/Client.hpp"
 
 Client::Client(int fd) : _fd(fd), _passOk(false), _nickSet(false), _userSet(false) {}
 

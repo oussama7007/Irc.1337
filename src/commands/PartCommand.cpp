@@ -14,7 +14,7 @@ void PartCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    std::string channelName = params;
+    std::string channelName = params[0];
     
     std::string partMessage = "Leaving"; 
     if (params.size() > 1)
