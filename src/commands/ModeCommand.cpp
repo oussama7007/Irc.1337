@@ -40,7 +40,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    std::string modeString = params[0];
+    std::string modeString = params[1];
     bool isPlus = true;
     size_t paramIndex = 2; 
 

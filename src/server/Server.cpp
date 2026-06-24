@@ -175,10 +175,21 @@ void Server::processLine(Client &client, const std::string &line)
     else
         it->second->execute(*this, client, msg.params);
 
-    if (client.hasDataToSend())
-        for (size_t i = 0; i < _pollFds.size(); ++i)
-            if (_pollFds[i].fd == client.getFd())
-                _pollFds[i].events |= POLLOUT;
+    // if (client.hasDataToSend())
+    //     for (size_t i = 0; i < _pollFds.size(); ++i)
+    //         if (_pollFds[i].fd == client.getFd())
+    //             _pollFds[i].events |= POLLOUT;
+    for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (it->second->hasDataToSend())
+        {
+            for (size_t i = 0; i < _pollFds.size(); ++i)
+            {
+                if (_pollFds[i].fd == it->first)
+                    _pollFds[i].events |= POLLOUT;
+            }
+        }
+    }
 }
 
 void Server::handleClientWritable(int fd)
