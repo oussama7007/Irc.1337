@@ -83,7 +83,17 @@ void Server::run()
             if (errno == EINTR) continue;
             throw std::runtime_error("poll() failed");
         }
-
+        //==================================================
+        // If your vector is named _pollFds:
+            std::cout << "[POLL] ready=" << ready << "\n";
+            for (size_t i = 0; i < _pollFds.size(); ++i) {
+                if (_pollFds[i].revents != 0) {
+                    std::cout << "[POLL] fd=" << _pollFds[i].fd
+                            << " events=0x" << std::hex << _pollFds[i].events
+                            << " revents=0x" << _pollFds[i].revents << std::dec << "\n";
+                }
+            }
+        //==================================================
         for (size_t i = 0; i < _pollFds.size(); ++i)
         {
             if (_pollFds[i].revents & POLLIN)
@@ -128,7 +138,18 @@ void Server::handleClientReadable(int fd)
 {
     char buf[4096];
     ssize_t n = recv(fd, buf, sizeof(buf), 0);
+    //===========================================
+ 
 
+        std::cout << "[READ] recv returned n=" << n << std::endl;
+
+        if (n > 0)
+        {
+            std::cout << "[DATA] ";
+            std::cout.write(buf, n);
+            std::cout << std::endl;
+        }
+    //===========================================
     if (n <= 0)
     {
         removeClient(fd);
