@@ -10,7 +10,6 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // استخدمنا المؤشرات هنا بدلاً من الأقواس لتجنب مشكلة النسخ
     int port = std::atoi(*(argv + 1));
     
     if (port < 1024 || port > 65535)
@@ -19,7 +18,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    // واستخدمنا المؤشرات هنا أيضاً
+  
     std::string password = *(argv + 2);
 
     try
