@@ -46,7 +46,7 @@ void Server::setupListenSocket()
         throw std::runtime_error("bind() failed");
     if (listen(_listenFd, SOMAXCONN) < 0)
         throw std::runtime_error("listen() failed");
-
+ 
     struct pollfd pfd;
     pfd.fd = _listenFd;
     pfd.events = POLLIN;
