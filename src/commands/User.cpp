@@ -1,6 +1,6 @@
-#include "include/UserCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
+#include "../include/UserCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
 
 UserCommand::UserCommand() {}
 UserCommand::~UserCommand() {}

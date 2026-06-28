@@ -1,7 +1,7 @@
-#include "include/PrivmsgCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
-#include "include/Channel.hpp"
+#include "../include/PrivmsgCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
+#include "../include/Channel.hpp"
 
 PrivmsgCommand::PrivmsgCommand() {}
 PrivmsgCommand::~PrivmsgCommand() {}

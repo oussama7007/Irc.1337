@@ -1,7 +1,7 @@
-#include "include/PartCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
-#include "include/Channel.hpp"
+#include "../include/PartCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
+#include "../include/Channel.hpp"
 
 PartCommand::PartCommand() {}
 PartCommand::~PartCommand() {}

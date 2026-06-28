@@ -1,6 +1,6 @@
-#include "include/NickCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
+#include "../include/NickCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
 
 NickCommand::NickCommand() {}
 NickCommand::~NickCommand() {}
