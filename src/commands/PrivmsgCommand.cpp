@@ -18,7 +18,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
         client.sendMessage(":server 412 " + client.getNickname() + " :No text to send\r\n");
         return;
     }
-
+ 
     std::string target = params[0];
     std::string message = params[1];
 
