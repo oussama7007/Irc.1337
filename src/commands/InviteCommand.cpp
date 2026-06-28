@@ -1,7 +1,7 @@
-#include "include/InviteCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
-#include "include/Channel.hpp"
+#include "../include/InviteCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
+#include "../include/Channel.hpp"
 
 InviteCommand::InviteCommand() {}
 InviteCommand::~InviteCommand() {}

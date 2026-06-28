@@ -2,10 +2,10 @@
 
 
 
-#include "include/JoinCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
-#include "include/Channel.hpp"
+#include "../include/JoinCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
+#include "../include/Channel.hpp"
 
 
 JoinCommand::JoinCommand() {}

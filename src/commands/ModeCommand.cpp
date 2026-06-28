@@ -1,7 +1,7 @@
-#include "include/ModeCommand.hpp"
-#include "include/Server.hpp"
-#include "include/Client.hpp"
-#include "include/Channel.hpp"
+#include "../include/ModeCommand.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
+#include "../include/Channel.hpp"
 #include <cstdlib> 
 
 ModeCommand::ModeCommand() {}
