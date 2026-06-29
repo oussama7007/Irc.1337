@@ -128,18 +128,7 @@ void Server::handleClientReadable(int fd)
 {
     char buf[4096];
     ssize_t n = recv(fd, buf, sizeof(buf), 0);
-    //===========================================
- 
 
-        std::cout << "[READ] recv returned n=" << n << std::endl;
-
-        if (n > 0)
-        {
-            std::cout << "[DATA] ";
-            std::cout.write(buf, n);
-            std::cout << std::endl;
-        }
-    //===========================================
     if (n <= 0)
     {
         removeClient(fd);
