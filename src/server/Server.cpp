@@ -83,17 +83,7 @@ void Server::run()
             if (errno == EINTR) continue;
             throw std::runtime_error("poll() failed");
         }
-        //==================================================
-        // If your vector is named _pollFds:
-            // std::cout << "[POLL] ready=" << ready << "\n";
-            // for (size_t i = 0; i < _pollFds.size(); ++i) {
-            //     if (_pollFds[i].revents != 0) {
-            //         std::cout << "[POLL] fd=" << _pollFds[i].fd
-            //                 << " events=0x" << std::hex << _pollFds[i].events
-            //                 << " revents=0x" << _pollFds[i].revents << std::dec << "\n";
-            //     }
-            // }
-        //==================================================
+
         for (size_t i = 0; i < _pollFds.size(); ++i)
         {
             if (_pollFds[i].revents & POLLIN)
