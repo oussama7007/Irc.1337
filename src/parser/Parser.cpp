@@ -55,7 +55,7 @@ Message Parser::parse(const std::string &raw_line)
             msg.params.push_back(word);
             
         // flekher ila kan chi text kanzidouh as parameter
-        f(has_trailing)
+        if(has_trailing)
             msg.params.push_back(trailing_part);
             
         return msg;
