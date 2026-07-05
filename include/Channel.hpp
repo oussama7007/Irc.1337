@@ -50,7 +50,8 @@ class Channel
         void setTopicRestricted(bool mode);
         void setPassword(const std::string &password);
         void setUserLimit(size_t limit);
-
+        
+        void    setTopic(const std::string &topic);
         bool isInviteOnly() const;
         bool isTopicRestricted() const;
 };
