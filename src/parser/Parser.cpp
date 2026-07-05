@@ -39,10 +39,15 @@ Message Parser::parse(const std::string &raw_line)
             msg.prefix = word.substr(1);
             if(ss >> word)
                 msg.command = word;
+                    for (size_t i = 0; i < msg.command.size(); i++)
+                        msg.command[i] = toupper((unsigned char)msg.command[i]);
         }
         else 
         {
-            msg.command = word; 
+            msg.command = word;
+                    for (size_t i = 0; i < msg.command.size(); i++)
+                        msg.command[i] = toupper((unsigned char)msg.command[i]);
+
         }
         
         // ne9raw dok l words lib9aw as parameters 
@@ -50,7 +55,7 @@ Message Parser::parse(const std::string &raw_line)
             msg.params.push_back(word);
             
         // flekher ila kan chi text kanzidouh as parameter
-        if(has_trailing)
+        f(has_trailing)
             msg.params.push_back(trailing_part);
             
         return msg;
