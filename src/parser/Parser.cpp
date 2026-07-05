@@ -39,12 +39,14 @@ Message Parser::parse(const std::string &raw_line)
             msg.prefix = word.substr(1);
             if(ss >> word)
                 msg.command = word;
+                    // bach client ila dkhel chi word mn l command f lower case kayb9a kayt9ra f upper case
                     for (size_t i = 0; i < msg.command.size(); i++)
                         msg.command[i] = toupper((unsigned char)msg.command[i]);
         }
         else 
         {
-            msg.command = word;
+            msg.command = word; 
+                    // bach client ila dkhel chi word mn l command f lower case kayb9a kayt9ra f upper case
                     for (size_t i = 0; i < msg.command.size(); i++)
                         msg.command[i] = toupper((unsigned char)msg.command[i]);
 
