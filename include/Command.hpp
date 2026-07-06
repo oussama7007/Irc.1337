@@ -19,3 +19,4 @@ Command* createPassCommand();
 Command* createNickCommand();
 Command* createUserCommand();
 Command* createJoinCommand();
+Command* createTopicCommand();

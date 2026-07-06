@@ -65,7 +65,7 @@ void Server::registerCommands()
     // _commands["PRIVMSG"] = createPrivmsgCommand();
     // _commands["KICK"]    = createKickCommand();
     // _commands["INVITE"]  = createInviteCommand();
-    // _commands["TOPIC"]   = createTopicCommand();
+    _commands["TOPIC"]   = createTopicCommand();
     // _commands["MODE"]    = createModeCommand();
 }
 
