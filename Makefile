@@ -21,6 +21,7 @@ SRCS        = $(SRC_DIR)main.cpp \
               $(CMD_DIR)InviteCommand.cpp \
               $(CMD_DIR)Kick.cpp \
               $(CMD_DIR)Join.cpp \
+              $(CMD_DIR)TopicCommand.cpp \
               $(CMD_DIR)ModeCommand.cpp \
               $(CMD_DIR)Nick.cpp \
               $(CMD_DIR)PartCommand.cpp \
