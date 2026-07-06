@@ -59,7 +59,7 @@ void TopicCommand::execute(Server &server, Client &client, const std::vector<std
 
     // broadcast to everyone in the channel including the sender
     std::string msg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost TOPIC " + channelName + " :" + newTopic + "\r\n";
-    channel->broadcastMessage(msg);
+    channel->broadcastMessage(msg, &client);
     client.sendMessage(msg);
 }
 
