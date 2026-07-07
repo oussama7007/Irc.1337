@@ -100,3 +100,4 @@ void Channel::setUserLimit(size_t limit) { _userLimit = limit; }
 
 bool Channel::isInviteOnly() const { return _isInviteOnly; }
 bool Channel::isTopicRestricted() const { return _topicRestricted; }
+std::vector<Client*> Channel::getMembers() const {return _members;}

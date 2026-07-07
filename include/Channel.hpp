@@ -31,7 +31,7 @@ class Channel
         std::string getPassword() const;
         size_t      getUserLimit() const;
         
-     
+    
         void        addMember(Client *client);
         void        removeMember(Client *client);
         void        addOperator(Client *client);
@@ -54,4 +54,6 @@ class Channel
         void    setTopic(const std::string &topic);
         bool isInviteOnly() const;
         bool isTopicRestricted() const;
+
+        std::vector<Client*> getMembers() const;
 };
