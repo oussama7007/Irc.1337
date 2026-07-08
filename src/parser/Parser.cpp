@@ -7,7 +7,7 @@ Message Parser::parse(const std::string &raw_line)
     std::string line = raw_line;
 
     // 7itach most of irc protocol ends with \r\n, o kan 7ido dik \r , \n getline kayhidha automatic  
-    if (!line.empty() && line[line.length() - 1] == '\r')
+    if (!line.empty() && line[line.length() - 1] == '\r') // 7tach f client popLin  function rm \n
     {
         line.erase(line.length() - 1);
     }
