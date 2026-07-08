@@ -95,7 +95,7 @@ void Server::run()
             }
             else if (_pollFds[i].revents & POLLOUT)
             {
-                handleClientWritable(_pollFds[i].fd);
+                handleClientWritable(_pollFds[i].fd); 
             }
             else if (_pollFds[i].revents & (POLLHUP | POLLERR))
             {
