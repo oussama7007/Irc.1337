@@ -144,7 +144,7 @@ void Server::handleClientReadable(int fd)
 
 void Server::processLine(Client &client, const std::string &line)
 {
-    std::cout << "[LINE] " << line << std::endl;
+    std::cout << "[LINE debugging ] " << line << std::endl;
     Message msg = Parser::parse(line);
     if (msg.command.empty())
         return;
