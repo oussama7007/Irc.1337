@@ -95,16 +95,16 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     else 
         client.sendMessage(":server 331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
         // 3. send NAMES list (353)
-std::vector<Client*> members = channel->getMembers();
-std::string namesList = "";
-for (size_t i = 0; i < members.size(); ++i)
-{
-    if (channel->isOperator(members[i]))
-        namesList += "@";
-    namesList += members[i]->getNickname();
-    if (i + 1 < members.size())
-        namesList += " ";
-}
+    std::vector<Client*> members = channel->getMembers();
+    std::string namesList = "";
+    for (size_t i = 0; i < members.size(); ++i)
+    {
+        if (channel->isOperator(members[i]))
+            namesList += "@";
+        namesList += members[i]->getNickname();
+        if (i + 1 < members.size())
+            namesList += " ";
+    }
 client.sendMessage(":server 353 " + client.getNickname() + " = " + channelName + " :" + namesList + "\r\n");
 
 // 4. end of NAMES (366)
