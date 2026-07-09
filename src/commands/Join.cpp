@@ -11,6 +11,23 @@
 JoinCommand::JoinCommand() {}
 JoinCommand::~JoinCommand() {}
 
+bool    isValidChannelName(const std::string &name)
+{
+    if(name.empty() || name.length() > 50) return false;
+
+    char firstChar = name[0];
+    if (firstChar != '#' && firstChar != '&' && firstChar != '+' && firstChar != '!')
+        return false;
+
+    for (size_t i = 0; i < name.length(); ++i)
+    {
+        char c = name[i];
+        if (c == ' ' || c == ',' || c == 7)
+            return false;
+    }
+    return true;
+}
+    
 
 void JoinCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
@@ -21,6 +38,11 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     }
 
     std::string channelName = params[0];
+    if (!isValidChannelName(channelName))
+    {
+        client.sendMessage(":server 476 " + client.getNickname() + " " + channelName + " :Invalid channel name\r\n");
+        return;
+    }   
     std::string providedKey = (params.size() > 1) ? params[1] : "";
     
     Channel *channel = server.findChannel(channelName);

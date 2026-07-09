@@ -54,6 +54,6 @@ class Channel
         void    setTopic(const std::string &topic);
         bool isInviteOnly() const;
         bool isTopicRestricted() const;
-
+        size_t getMembersCount() const;
         std::vector<Client*> getMembers() const;
 };

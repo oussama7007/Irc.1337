@@ -92,6 +92,13 @@ void Channel::removeInvited(Client *client)
         _invitedClients.erase(it);
 }
 
+
+
+
+size_t Channel::getMembersCount() const {    return _members.size(); }
+
+
+
 void Channel::setTopic(const std::string &topic) { _topic = topic; }
 void Channel::setInviteOnly(bool mode) { _isInviteOnly = mode; }
 void Channel::setTopicRestricted(bool mode) { _topicRestricted = mode; }
