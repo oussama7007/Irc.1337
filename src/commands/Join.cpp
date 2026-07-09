@@ -69,10 +69,6 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
             return;
         }
 
-        // 3. التحقق من العدد الأقصى (mode +l)
-        // ملاحظة: ستحتاج لإضافة دالة getMembersCount() في كلاس Channel تُرجع _members.size()
-        // للتبسيط الآن، إذا لم تضفها، افترض أن العدد لم يتجاوز الحد، أو أضف الدالة لتفعيل هذا الشرط.
-        
         if (channel->getUserLimit() > 0 && channel->getMembersCount() >= channel->getUserLimit())
         {
             client.sendMessage(":server 471 " + client.getNickname() + " " + channelName + " :Cannot join channel (+l) - channel is full\r\n");
