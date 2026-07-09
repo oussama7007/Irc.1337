@@ -60,13 +60,13 @@ void Server::registerCommands()
     _commands["NICK"] = createNickCommand();
     _commands["USER"] = createUserCommand();
     _commands["JOIN"] = createJoinCommand();
-    // add one line here every time you finish a new command:
+
     // _commands["PART"]    = createPartCommand();
-    // _commands["PRIVMSG"] = createPrivmsgCommand();
-    // _commands["KICK"]    = createKickCommand();
-    // _commands["INVITE"]  = createInviteCommand();
+    _commands["PRIVMSG"] = createPrivmsgCommand();
+    _commands["KICK"]    = createKickCommand();
+    _commands["INVITE"]  = createInviteCommand();
     _commands["TOPIC"]   = createTopicCommand();
-    // _commands["MODE"]    = createModeCommand();
+    _commands["MODE"]    = createModeCommand();
 }
 
 void Server::run()

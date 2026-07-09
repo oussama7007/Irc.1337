@@ -20,3 +20,9 @@ Command* createNickCommand();
 Command* createUserCommand();
 Command* createJoinCommand();
 Command* createTopicCommand();
+
+Command* createPrivmsgCommand();
+Command* createKickCommand();
+Command* createInviteCommand();
+
+Command* createModeCommand();

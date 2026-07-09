@@ -11,7 +11,7 @@
 JoinCommand::JoinCommand() {}
 JoinCommand::~JoinCommand() {}
 
-bool    isValidChannelName(const std::string &name)
+static bool    isValidChannelName(const std::string &name)
 {
     if(name.empty() || name.length() > 50) return false;
 
@@ -81,7 +81,6 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (isNewChannel)
         channel->addOperator(&client);
-
     else if (channel->isInvited(&client))
         channel->removeInvited(&client);
 
