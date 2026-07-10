@@ -63,3 +63,14 @@ This is where everything comes together. `poll()` takes an array of `struct p
 **Memory safety**: no leaks, no double-frees, no use-after-free. Be able to explain what happens when a client disconnects — you remove their fd from the `pollfd` array, free/destroy their state, and close the fd. Order matters.
 
 The one question that sums up Level 6: *"Walk me through exactly what happens from the moment a client types a message and hits Enter until every other client in the channel receives it."* If you can answer that end-to-end without gaps, you're ready.
+
+
+
+=========================
+achno khass mli kadir nc -C ip ...and join chi channel direct bla matregesterach khass ytele3 lik message had sat khass ydir register, project mli kaydir join #channel name kaydekhelo direct 
+
+
+
+ila kenty deja member f channel o derti 3awtani join l nafss channel makhasch ydir lik join , khass maytle3 walo lik o lnass li f same channel 
+
+=========================
