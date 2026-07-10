@@ -24,7 +24,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
 
     std::string msgToSend = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PRIVMSG " + target + " :" + message + "\r\n";
 
-    if (target[0] == '#')
+    if (target[0] == '#' || target[0] == '+' || target[0] == '!' || target[0] == '&')
     {
         Channel *channel = server.findChannel(target);
         
