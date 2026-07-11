@@ -74,3 +74,13 @@ achno khass mli kadir nc -C ip ...and join chi channel direct bla matregesterach
 ila kenty deja member f channel o derti 3awtani join l nafss channel makhasch ydir lik join , khass maytle3 walo lik o lnass li f same channel 
 
 =========================
+your serv 
+privmsg #ll "hello world"
+:server 401 bb #ll :No such nick/channel
+
+
+liberaserv 
+privmsg #ll "hello world"
+:rr!~rr@197.230.30.146 PRIVMSG #ll :"hello
+
+=========================
