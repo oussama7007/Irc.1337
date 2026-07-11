@@ -18,7 +18,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     std::string target = params[0];
 
 
-    if (target[0] != '#') return;
+    if (target[0] != '#' && target[0] != '!' && target[0] != '+' && target[0] != '&') return;
 
     Channel *channel = server.findChannel(target);
     if (channel == NULL)
