@@ -42,13 +42,14 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
         client.sendMessage(":server 443 " + client.getNickname() + " " + targetNick + " " + channelName + " :is already on channel\r\n");
         return;
     }
-
-    if (!channel->isOperator(&client))
+    if(channel->isInviteOnly())
     {
-        client.sendMessage(":server 482 " + client.getNickname() + " " + channelName + " :You're not channel operator\r\n");
-        return;
+        if (!channel->isOperator(&client))
+        {
+            client.sendMessage(":server 482 " + client.getNickname() + " " + channelName + " :You're not channel operator\r\n");
+            return;
+        }
     }
-
 
     channel->addInvited(targetClient);
 
