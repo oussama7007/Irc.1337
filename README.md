@@ -84,3 +84,17 @@ privmsg #ll "hello world"
 :rr!~rr@197.230.30.146 PRIVMSG #ll :"hello
 
 =========================
+right irc 
+mode #yy +l abc
+mode #yy +l 1
+:yynick!~yy@197.230.30.146 MODE #yy +l 1 
+
+
+your serv 
+mode +test +l abc
+:bb!bb@localhost MODE +test +l abc
+:bb!bb@localhost MODE +test +l abc
+should not print those two lines cus abc is false l require num  even if it like 1a but not a1 
+
+
+=========================
