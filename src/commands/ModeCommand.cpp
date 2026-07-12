@@ -3,6 +3,7 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
 #include <cstdlib> 
+#include <cstdio>
 #include <iostream>
 ModeCommand::ModeCommand() {}
 ModeCommand::~ModeCommand() {}

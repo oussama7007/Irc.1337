@@ -1,0 +1,8 @@
+*.o
+*.d
+ircserv
+.DS_Store
+*.swp
+*.swo
+*~
+Md files/

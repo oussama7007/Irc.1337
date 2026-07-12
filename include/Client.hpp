@@ -1,39 +1,60 @@
-// include/Client.hpp  [PARTNER'S PART — placeholder]
 #pragma once
+
 #include <string>
+#include <cstddef>
 
 class Client
 {
     private:
         int         _fd;
+        std::string _ip;
+
+        std::string _recvBuffer;
+        std::string _sendBuffer;
+
         std::string _nickname;
         std::string _username;
-        std::string _inBuffer;   // raw bytes received, not yet split into lines
-        std::string _outBuffer;  // bytes queued to send, not yet flushed to the socket
+
         bool        _passOk;
         bool        _nickSet;
         bool        _userSet;
 
+        bool        _dead;
+
+        bool        _closing;
+
+        std::string _deadReason;
+
+        Client(const Client &other);
+        Client &operator=(const Client &other);
+
     public:
-        Client(int fd);
+        Client(int fd, const std::string &ip);
+        ~Client();
 
-        int          getFd() const;
-        std::string  getNickname() const;
-        std::string  getUsername() const;
-        bool         isRegistered() const;  // true once PASS + NICK + USER all succeeded
+        int                 getFd() const;
+        const std::string   &getIp() const;
 
-        void         setNickname(const std::string &nick);
-        void         setUsername(const std::string &user);
-        void         setPassOk(bool ok);
-        void         setNickSet(bool ok);
-        void         setUserSet(bool ok);
+        void                sendMessage(const std::string &message);
+        void                setPassOk(bool value);
+        bool                hasPassOk() const;
+        const std::string   &getNickname() const;
+        void                setNickname(const std::string &nickname);
+        void                setNickSet(bool value);
+        const std::string   &getUsername() const;
+        void                setUsername(const std::string &username);
+        void                setUserSet(bool value);
+        bool                isRegistered() const;
 
-        void         appendToInBuffer(const std::string &data);
-        bool         hasCompleteLine() const;
-        std::string  popLine();             // extracts + removes one line up to '\n'
+        bool                appendToRecvBuffer(const char *data, std::size_t length);
+        bool                extractLine(std::string &line);
+        bool                hasPendingOutput() const;
+        const std::string   &getSendBuffer() const;
+        void                consumeSendBuffer(std::size_t bytesSent);
 
-        void         sendMessage(const std::string &msg); // queues into outBuffer, doesn't send directly
-        bool         hasDataToSend() const;
-        std::string& getOutBuffer();
-        void         clearOutBuffer(size_t n);
+        void                markDead(const std::string &reason);
+        bool                isDead() const;
+        void                markClosing(const std::string &reason);
+        bool                isClosing() const;
+        const std::string   &getDeadReason() const;
 };
