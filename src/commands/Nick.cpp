@@ -28,7 +28,7 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
         std::string nickMsg = ":" + oldNick + "!" + client.getUsername() + "@localhost NICK :" + newNick + "\r\n";
         client.sendMessage(nickMsg);
     }
-
+  
     client.setNickname(newNick);
     client.setNickSet(true);
     
