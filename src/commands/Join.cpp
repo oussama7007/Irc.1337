@@ -16,7 +16,7 @@ static bool    isValidChannelName(const std::string &name)
     if(name.empty() || name.length() > 50) return false;
 
     char firstChar = name[0];
-    if (firstChar != '#' && firstChar != '&' && firstChar != '+' && firstChar != '!')
+    if (firstChar != '#' && firstChar != '&')
         return false;
 
     for (size_t i = 0; i < name.length(); ++i)
