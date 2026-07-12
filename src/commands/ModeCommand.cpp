@@ -3,7 +3,7 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
 #include <cstdlib> 
-
+#include <iostream>
 ModeCommand::ModeCommand() {}
 ModeCommand::~ModeCommand() {}
 
@@ -75,6 +75,9 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
             if (isPlus && paramIndex < params.size()) 
             {
                 channel->setUserLimit(std::atoi(params[paramIndex].c_str()));
+                printf("========================\n");
+                std::cout << std::atoi(params[paramIndex].c_str()) << std::endl;
+                printf("==========================\n");
                 appliedModes += 'l';
                 appliedParams += " " + params[paramIndex];
                 paramIndex++;
@@ -115,7 +118,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     {
         std::string modeMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost MODE " + target + " " + appliedModes + appliedParams + "\r\n";
         channel->broadcastMessage(modeMsg);
-        client.sendMessage(modeMsg);
+        // client.sendMessage(modeMsg);
     }
 }
 

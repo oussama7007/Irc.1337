@@ -54,7 +54,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
     std::string msgToSend = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost KICK " + channelName + " " + targetNick + " :" + reason + "\r\n";
 
     channel->broadcastMessage(msgToSend, &client);
-    client.sendMessage(msgToSend);        
+    // client.sendMessage(msgToSend);        
     
     channel->removeMember(targetClient);
 }
