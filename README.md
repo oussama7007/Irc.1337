@@ -96,5 +96,8 @@ mode +test +l abc
 :bb!bb@localhost MODE +test +l abc
 should not print those two lines cus abc is false l require num  even if it like 1a but not a1 
 
+ila kant mode #channel +l 0 ola +l abc khassk matele3ch chi message 
+ils kant mode #channel +l khaasek tele3  :Not enough parameters
+
 
 =========================
