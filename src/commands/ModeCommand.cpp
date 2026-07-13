@@ -75,7 +75,8 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         else if (c == 'l') 
         {
-
+            if(paramIndex == params.size())
+                client.sendMessage(":server 461 " + client.getNickname() + " MODE :Not enough parameters\r\n");
             if (isPlus && paramIndex < params.size()) 
             {
                 if(std::atoi(params[paramIndex].c_str()) <= 0 )
@@ -83,7 +84,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 else  
                 {
                     channel->setUserLimit(std::atoi(params[paramIndex].c_str()));
-                    appliedModes += 'l';
+                    appliedModes += "+l";
                     appliedParams += " " + params[paramIndex];
                     paramIndex++;
                 }
