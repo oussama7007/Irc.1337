@@ -48,6 +48,8 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     std::string appliedModes = "";
     std::string appliedParams = "";
 
+    int flag_for_silent = 0 ;
+
     for (size_t i = 0; i < modeString.length(); ++i)
     {
         char c = modeString[i];
@@ -73,15 +75,19 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         else if (c == 'l') 
         {
+
             if (isPlus && paramIndex < params.size()) 
             {
-                channel->setUserLimit(std::atoi(params[paramIndex].c_str()));
-                printf("========================\n");
-                std::cout << std::atoi(params[paramIndex].c_str()) << std::endl;
-                printf("==========================\n");
-                appliedModes += 'l';
-                appliedParams += " " + params[paramIndex];
-                paramIndex++;
+                if(std::atoi(params[paramIndex].c_str()) <= 0 )
+                        flag_for_silent = 1;
+                else  
+                {
+                    channel->setUserLimit(std::atoi(params[paramIndex].c_str()));
+                    appliedModes += 'l';
+                    appliedParams += " " + params[paramIndex];
+                    paramIndex++;
+                }
+            
             }
             else if (!isPlus) 
             {
@@ -115,7 +121,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
     }
 
-    if (!appliedModes.empty() && appliedModes != "+" && appliedModes != "-")
+    if (!appliedModes.empty() && appliedModes != "+" && appliedModes != "-" && !flag_for_silent)
     {
         std::string modeMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost MODE " + target + " " + appliedModes + appliedParams + "\r\n";
         channel->broadcastMessage(modeMsg);
