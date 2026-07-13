@@ -5,7 +5,7 @@
 
 InviteCommand::InviteCommand() {}
 InviteCommand::~InviteCommand() {}
-
+ 
 void InviteCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.size() < 2)
