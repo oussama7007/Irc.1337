@@ -97,4 +97,9 @@ mode +test +l abc
 should not print those two lines cus abc is false l require num  even if it like 1a but not a1 
 
 
+mode -l no parameters : ila channel kant deja +l khassha tele3 message ila kant channel -l makhashach tele3 tachi message 
+
+
+
+
 =========================
