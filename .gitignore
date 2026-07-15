@@ -1,6 +1,7 @@
 *.o
 *.d
 ircserv
+ircbot
 .DS_Store
 *.swp
 *.swo

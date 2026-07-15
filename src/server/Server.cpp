@@ -199,11 +199,8 @@ void Server::setupSocket()
     if (setsockopt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &reuseFlag, sizeof(reuseFlag)) < 0)
         throw std::runtime_error(std::string("setsockopt(SO_REUSEADDR) failed: ") + std::strerror(errno));
 
-    int listenFlags = fcntl(_listenFd, F_GETFL, 0);
-    if (listenFlags < 0)
-        throw std::runtime_error(std::string("fcntl(F_GETFL) failed: ") + std::strerror(errno));
-
-    if (fcntl(_listenFd, F_SETFL, listenFlags | O_NONBLOCK) < 0)
+    // The subject permits fcntl() only with F_SETFL and O_NONBLOCK.
+    if (fcntl(_listenFd, F_SETFL, O_NONBLOCK) < 0)
         throw std::runtime_error(std::string("fcntl(O_NONBLOCK) failed: ") + std::strerror(errno));
 
     struct sockaddr_in serverAddress;
@@ -377,16 +374,8 @@ void Server::acceptNewClient()
         return;
     }
 
-    int clientFlags = fcntl(clientFd, F_GETFL, 0);
-    if (clientFlags < 0)
-    {
-        std::cerr << "Error: fcntl(F_GETFL) failed for fd=" << clientFd << ": "
-                  << std::strerror(errno) << ". Closing connection." << std::endl;
-        closeSocket(clientFd, "client socket after F_GETFL failure");
-        return;
-    }
-
-    if (fcntl(clientFd, F_SETFL, clientFlags | O_NONBLOCK) < 0)
+    // The subject permits fcntl() only with F_SETFL and O_NONBLOCK.
+    if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
     {
         std::cerr << "Error: fcntl(F_SETFL) failed for fd=" << clientFd << ": "
                   << std::strerror(errno) << ". Closing connection." << std::endl;
