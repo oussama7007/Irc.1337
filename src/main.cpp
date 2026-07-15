@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     if (argv == NULL || argc != 3 || argv[0] == NULL)
     {
         std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
-        std::cerr << "Example: ./ircserv 6687 7mida_7ayawan" << std::endl;
+        std::cerr << "Example: ./ircserv 6687 Passw@ord" << std::endl;
         return 1;
     }
 
