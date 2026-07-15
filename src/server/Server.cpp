@@ -15,14 +15,53 @@
 #include <cerrno>
 #include <cstring>
 #include <cctype>
+#include <algorithm>
+#include <ctime>
 #include <iostream>
 #include <stdexcept>
 
+// I keep the pending kernel queue bounded and large enough for a burst of
+// legitimate connections while the single poll loop catches up.
 static const int LISTEN_BACKLOG = 128;
 
+// One recv() handles a bounded chunk so a busy client cannot monopolize one
+// event-loop iteration.
 static const std::size_t RECV_CHUNK_SIZE = 4096;
 
+// The timeout wakes poll regularly so clients cannot hold pre-registration
+// sockets forever without sending any data.
+static const int POLL_TIMEOUT_MS = 1000;
+static const std::time_t REGISTRATION_TIMEOUT_SECONDS = 30;
+
+// These limits preserve the tested 128-client local workload while placing a
+// hard bound on descriptors controlled by one address and by the whole server.
+static const std::size_t MAX_CLIENTS_PER_IP = 128;
+static const std::size_t MAX_TOTAL_CLIENTS = 512;
+
 static volatile sig_atomic_t g_shutdown = 0;
+
+//oadouz
+// I check close() even though cleanup cannot safely retry it, because a hidden
+// descriptor cleanup failure must still be visible during debugging.
+static void closeSocket(int fd, const std::string &context)
+{
+    if (fd < 0)
+        return;
+
+    if (close(fd) < 0)
+    {
+        std::cerr << "Warning: close() failed for " << context << ", fd=" << fd
+                  << ": " << std::strerror(errno) << "." << std::endl;
+    }
+}
+
+//oadouz
+static std::string getClientDisplayName(const Client *client)
+{
+    if (client == NULL || client->getNickname().empty())
+        return "*";
+    return client->getNickname();
+}
 
 //oadouz
 static void handleShutdownSignal(int signalNumber)
@@ -31,13 +70,16 @@ static void handleShutdownSignal(int signalNumber)
     g_shutdown = 1;
 }
 
+//si-hamou
+// Keep these factories with the dispatcher and command-handler implementation.
 Command *createPartCommand();
 Command *createPrivmsgCommand();
 Command *createKickCommand();
 Command *createInviteCommand();
 Command *createModeCommand();
 
-//oadouz
+//si-hamou
+// This normalization is part of command dispatch, not server transport.
 static std::string toUpperCase(const std::string &text)
 {
     std::string result = text;
@@ -48,11 +90,41 @@ static std::string toUpperCase(const std::string &text)
 }
 
 //oadouz
+// I use the IRC casemapping here because IRC identity is not compared with
+// normal byte-for-byte string rules. Every nickname lookup must agree.
+static std::string toIrcLowerCase(const std::string &text)
+{
+    std::string result = text;
+
+    for (std::size_t i = 0; i < result.size(); ++i)
+    {
+        unsigned char character = static_cast<unsigned char>(result[i]);
+
+        if (character >= 'A' && character <= 'Z')
+            result[i] = static_cast<char>(character - 'A' + 'a');
+        else if (character == '[')
+            result[i] = '{';
+        else if (character == ']')
+            result[i] = '}';
+        else if (character == '\\')
+            result[i] = '|';
+        else if (character == '~')
+            result[i] = '^';
+    }
+    return result;
+}
+
+//oadouz
 Server::Server(int port, const std::string &password)
     : _port(port),
       _password(password),
       _listenFd(-1)
 {
+    if (_port < 1 || _port > 65535)
+        throw std::invalid_argument("server port must be between 1 and 65535");
+
+    if (_password.empty())
+        throw std::invalid_argument("server password must not be empty");
 }
 
 //oadouz
@@ -73,7 +145,7 @@ Server::~Server()
 
     if (_listenFd >= 0)
     {
-        close(_listenFd);
+        closeSocket(_listenFd, "listening socket");
         _listenFd = -1;
     }
 }
@@ -90,28 +162,34 @@ void Server::setupSignals()
     ignoreAction.sa_handler = SIG_IGN;
 
     if (sigemptyset(&ignoreAction.sa_mask) < 0)
-        throw std::runtime_error("sigemptyset() failed");
+        throw std::runtime_error(std::string("sigemptyset() failed for SIGPIPE: ")
+                                 + std::strerror(errno));
+
     if (sigaction(SIGPIPE, &ignoreAction, NULL) < 0)
-        throw std::runtime_error("sigaction(SIGPIPE) failed: SIGPIPE handling is required");
+        throw std::runtime_error(std::string("sigaction(SIGPIPE) failed: ")
+                                 + std::strerror(errno));
 
     shutdownAction.sa_handler = handleShutdownSignal;
     if (sigemptyset(&shutdownAction.sa_mask) < 0)
-        throw std::runtime_error("sigemptyset() failed");
+        throw std::runtime_error(std::string("sigemptyset() failed for shutdown signals: ")
+                                 + std::strerror(errno));
 
     shutdownAction.sa_flags = 0;
 
     if (sigaction(SIGINT, &shutdownAction, NULL) < 0)
-        throw std::runtime_error("sigaction(SIGINT) failed");
+        throw std::runtime_error(std::string("sigaction(SIGINT) failed: ")
+                                 + std::strerror(errno));
     if (sigaction(SIGTERM, &shutdownAction, NULL) < 0)
-        throw std::runtime_error("sigaction(SIGTERM) failed");
+        throw std::runtime_error(std::string("sigaction(SIGTERM) failed: ")
+                                 + std::strerror(errno));
     if (sigaction(SIGQUIT, &shutdownAction, NULL) < 0)
-        throw std::runtime_error("sigaction(SIGQUIT) failed");
+        throw std::runtime_error(std::string("sigaction(SIGQUIT) failed: ")
+                                 + std::strerror(errno));
 }
 
 //oadouz
 void Server::setupSocket()
 {
-
     _listenFd = socket(AF_INET, SOCK_STREAM, 0);
     if (_listenFd < 0)
         throw std::runtime_error(std::string("socket() failed: ") + std::strerror(errno));
@@ -121,7 +199,11 @@ void Server::setupSocket()
     if (setsockopt(_listenFd, SOL_SOCKET, SO_REUSEADDR, &reuseFlag, sizeof(reuseFlag)) < 0)
         throw std::runtime_error(std::string("setsockopt(SO_REUSEADDR) failed: ") + std::strerror(errno));
 
-    if (fcntl(_listenFd, F_SETFL, O_NONBLOCK) < 0)
+    int listenFlags = fcntl(_listenFd, F_GETFL, 0);
+    if (listenFlags < 0)
+        throw std::runtime_error(std::string("fcntl(F_GETFL) failed: ") + std::strerror(errno));
+
+    if (fcntl(_listenFd, F_SETFL, listenFlags | O_NONBLOCK) < 0)
         throw std::runtime_error(std::string("fcntl(O_NONBLOCK) failed: ") + std::strerror(errno));
 
     struct sockaddr_in serverAddress;
@@ -147,7 +229,9 @@ void Server::setupSocket()
     _pollFds.push_back(listenPollFd);
 }
 
-//oadouz
+//si-hamou
+// This registry belongs to command dispatch. Validate every returned factory
+// pointer before inserting it so a missing handler cannot be dereferenced.
 void Server::setupCommands()
 {
     _commands["PASS"] = createPassCommand();
@@ -175,7 +259,11 @@ void Server::run()
     {
         refreshPollEvents();
 
-        int readyCount = poll(&_pollFds[0], _pollFds.size(), -1);
+        if (_pollFds.empty())
+            throw std::runtime_error("poll() cannot run without the listening socket");
+
+        int readyCount = poll(&_pollFds[0], static_cast<nfds_t>(_pollFds.size()),
+                              POLL_TIMEOUT_MS);
         if (readyCount < 0)
         {
 
@@ -217,6 +305,7 @@ void Server::run()
             }
         }
 
+        expireUnregisteredClients();
         reapDeadClients();
     }
 
@@ -241,15 +330,15 @@ void Server::refreshPollEvents()
 
         if (client == NULL)
         {
-            std::cerr << "Internal error: poll fd=" << _pollFds[i].fd
-                      << " has no matching client." << std::endl;
-            _pollFds[i].events = POLLIN;
-            continue;
+            throw std::runtime_error("poll state contains a client fd with no Client object");
         }
 
         if (client->isClosing())
         {
-            _pollFds[i].events = client->hasPendingOutput() ? POLLOUT : 0;
+            if (client->hasPendingOutput())
+                _pollFds[i].events = POLLOUT;
+            else
+                _pollFds[i].events = 0;
             continue;
         }
 
@@ -270,23 +359,61 @@ void Server::acceptNewClient()
 
     if (clientFd < 0)
     {
-        std::cerr << "Warning: accept() failed. Continuing to listen for connections." << std::endl;
+        int acceptError = errno;
+
+        if (acceptError == EAGAIN || acceptError == EWOULDBLOCK || acceptError == EINTR)
+            return;
+
+        std::cerr << "Warning: accept() failed: " << std::strerror(acceptError)
+                  << ". Continuing to listen for connections." << std::endl;
         return;
     }
 
-    if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
+    if (_clients.size() >= MAX_TOTAL_CLIENTS)
     {
+        std::cerr << "Warning: rejecting fd=" << clientFd
+                  << " because the global client limit was reached." << std::endl;
+        closeSocket(clientFd, "rejected client socket");
+        return;
+    }
 
-        std::cerr << "Error: failed to set new client socket to non-blocking mode. Closing connection."
-                  << std::endl;
-        close(clientFd);
+    int clientFlags = fcntl(clientFd, F_GETFL, 0);
+    if (clientFlags < 0)
+    {
+        std::cerr << "Error: fcntl(F_GETFL) failed for fd=" << clientFd << ": "
+                  << std::strerror(errno) << ". Closing connection." << std::endl;
+        closeSocket(clientFd, "client socket after F_GETFL failure");
+        return;
+    }
+
+    if (fcntl(clientFd, F_SETFL, clientFlags | O_NONBLOCK) < 0)
+    {
+        std::cerr << "Error: fcntl(F_SETFL) failed for fd=" << clientFd << ": "
+                  << std::strerror(errno) << ". Closing connection." << std::endl;
+        closeSocket(clientFd, "client socket after fcntl failure");
         return;
     }
 
     char ipBuffer[INET_ADDRSTRLEN];
     const char *ipText = inet_ntop(AF_INET, &clientAddress.sin_addr, ipBuffer, sizeof(ipBuffer));
 
-    std::string clientIp = (ipText != NULL) ? std::string(ipText) : std::string("unknown");
+    if (ipText == NULL)
+    {
+        std::cerr << "Error: inet_ntop() failed for fd=" << clientFd << ": "
+                  << std::strerror(errno) << ". Closing connection." << std::endl;
+        closeSocket(clientFd, "client socket after inet_ntop failure");
+        return;
+    }
+
+    std::string clientIp = ipText;
+
+    if (countClientsFromIp(clientIp) >= MAX_CLIENTS_PER_IP)
+    {
+        std::cerr << "Warning: rejecting a connection from " << clientIp
+                  << " because the per-IP client limit was reached." << std::endl;
+        closeSocket(clientFd, "client socket rejected by per-IP limit");
+        return;
+    }
 
     Client *newClient = NULL;
     try
@@ -311,7 +438,7 @@ void Server::acceptNewClient()
             delete newClient;
         }
         else
-            close(clientFd);
+            closeSocket(clientFd, "client socket after allocation failure");
         return;
     }
 
@@ -343,7 +470,12 @@ void Server::handleClientRead(int fd)
 
     if (bytesRead < 0)
     {
-        client->markDead("recv() failed");
+        int receiveError = errno;
+
+        if (receiveError == EAGAIN || receiveError == EWOULDBLOCK || receiveError == EINTR)
+            return;
+
+        client->markDead(std::string("recv() failed: ") + std::strerror(receiveError));
         return;
     }
 
@@ -362,7 +494,7 @@ void Server::handleClientRead(int fd)
     {
         processLine(client, completedLine);
 
-        if (client->isDead())
+        if (client->isDead() || client->isClosing())
             break;
     }
 }
@@ -387,16 +519,30 @@ void Server::handleClientWrite(int fd)
 
     ssize_t bytesSent = send(fd, outgoingData.c_str(), outgoingData.size(), 0);
 
-    if (bytesSent <= 0)
+    if (bytesSent < 0)
     {
-        client->markDead("send() failed");
+        int sendError = errno;
+
+        if (sendError == EAGAIN || sendError == EWOULDBLOCK || sendError == EINTR)
+            return;
+
+        client->markDead(std::string("send() failed: ") + std::strerror(sendError));
+        return;
+    }
+
+    if (bytesSent == 0)
+    {
+        client->markDead("send() returned zero bytes");
         return;
     }
 
     client->consumeSendBuffer(static_cast<std::size_t>(bytesSent));
 }
 
-//oadouz
+//si-hamou
+// Fix CAP negotiation state and keep QUIT reasons unchanged instead of adding
+// a second "Quit:" prefix. Replace its ternary expressions with explicit if
+// statements to follow the agreed project style. This dispatcher is Si Hamou's.
 void Server::processLine(Client *client, const std::string &rawLine)
 {
 
@@ -469,6 +615,39 @@ void Server::processLine(Client *client, const std::string &rawLine)
 }
 
 //oadouz
+// I expire registration before reaping so anonymous sockets cannot retain one
+// descriptor forever without completing PASS, NICK, and USER.
+void Server::expireUnregisteredClients()
+{
+    std::time_t currentTime = std::time(NULL);
+
+    if (currentTime == static_cast<std::time_t>(-1))
+    {
+        std::cerr << "Warning: time() failed while checking registration deadlines."
+                  << std::endl;
+        return;
+    }
+
+    for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        Client *client = it->second;
+
+        if (client == NULL || client->isDead() || client->isClosing()
+            || client->isRegistered())
+            continue;
+
+        if (currentTime < client->getConnectedAt())
+            continue;
+
+        if (std::difftime(currentTime, client->getConnectedAt())
+            >= static_cast<double>(REGISTRATION_TIMEOUT_SECONDS))
+        {
+            client->markDead("registration timeout");
+        }
+    }
+}
+
+//oadouz
 void Server::reapDeadClients()
 {
     std::vector<int> deadFds;
@@ -497,20 +676,41 @@ void Server::disconnectClient(int fd)
 
     Client *client = clientIt->second;
 
-    std::string displayName = client->getNickname().empty() ? std::string("*") : client->getNickname();
+    std::string displayName = getClientDisplayName(client);
     std::cout << "[-] Client disconnected: fd=" << fd << ", nickname=" << displayName
               << ", reason=" << client->getDeadReason() << "." << std::endl;
 
     if (client->isRegistered())
     {
+        std::string quitReason = client->getDeadReason();
+        if (quitReason.empty())
+            quitReason = "Client Quit";
+
         std::string quitMessage = ":" + client->getNickname() + "!" + client->getUsername()
-                                  + "@localhost QUIT :" + client->getDeadReason() + "\r\n";
+                                  + "@localhost QUIT :" + quitReason + "\r\n";
+        std::vector<Client*> recipients;
+
         for (std::map<std::string, Channel*>::iterator chIt = _channels.begin(); chIt != _channels.end(); ++chIt)
         {
+            Channel *channel = chIt->second;
 
-            if (chIt->second->isMember(client))
-                chIt->second->broadcastMessage(quitMessage, client);
+            if (!channel->isMember(client))
+                continue;
+
+            std::vector<Client*> members = channel->getMembers();
+            for (std::size_t i = 0; i < members.size(); ++i)
+            {
+                if (members[i] != client
+                    && std::find(recipients.begin(), recipients.end(), members[i])
+                       == recipients.end())
+                {
+                    recipients.push_back(members[i]);
+                }
+            }
         }
+
+        for (std::size_t i = 0; i < recipients.size(); ++i)
+            recipients[i]->sendMessage(quitMessage);
     }
 
     for (std::map<std::string, Channel*>::iterator chIt = _channels.begin(); chIt != _channels.end(); ++chIt)
@@ -543,6 +743,22 @@ Client *Server::getClientByFd(int fd)
 }
 
 //oadouz
+std::size_t Server::countClientsFromIp(const std::string &ip) const
+{
+    if (ip.empty())
+        return 0;
+
+    std::size_t count = 0;
+    for (std::map<int, Client*>::const_iterator it = _clients.begin();
+         it != _clients.end(); ++it)
+    {
+        if (it->second != NULL && !it->second->isDead() && it->second->getIp() == ip)
+            ++count;
+    }
+    return count;
+}
+
+//oadouz
 const std::string &Server::getPassword() const
 {
     return _password;
@@ -555,18 +771,58 @@ Client *Server::findClientByNick(const std::string &nickname)
     if (nickname.empty())
         return NULL;
 
+    const std::string normalizedNickname = toIrcLowerCase(nickname);
+
     for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
     {
 
-        if (!it->second->isDead() && it->second->getNickname() == nickname)
+        if (!it->second->isDead()
+            && toIrcLowerCase(it->second->getNickname()) == normalizedNickname)
             return it->second;
     }
     return NULL;
 }
 
 //oadouz
+// I send one NICK event per affected client because two users can share more
+// than one channel and must not receive the same identity change twice.
+void Server::broadcastNicknameChange(Client *client,
+                                     const std::string &oldNickname,
+                                     const std::string &newNickname)
+{
+    if (client == NULL || oldNickname.empty() || newNickname.empty())
+        return;
+
+    std::string message = ":" + oldNickname + "!" + client->getUsername()
+                        + "@localhost NICK :" + newNickname + "\r\n";
+    std::vector<Client*> recipients;
+    recipients.push_back(client);
+
+    for (std::map<std::string, Channel*>::iterator channelIt = _channels.begin();
+         channelIt != _channels.end(); ++channelIt)
+    {
+        Channel *channel = channelIt->second;
+
+        if (!channel->isMember(client))
+            continue;
+
+        std::vector<Client*> members = channel->getMembers();
+        for (std::size_t i = 0; i < members.size(); ++i)
+        {
+            if (std::find(recipients.begin(), recipients.end(), members[i]) == recipients.end())
+                recipients.push_back(members[i]);
+        }
+    }
+
+    for (std::size_t i = 0; i < recipients.size(); ++i)
+        recipients[i]->sendMessage(message);
+}
+
+//oadouz
 Channel *Server::findChannel(const std::string &name)
 {
+    //si-hamou: Pass one canonical IRC-casemapped channel key here and preserve
+    // the first spelling only for display, otherwise shadow channels remain.
     std::map<std::string, Channel*>::iterator it = _channels.find(name);
 
     if (it == _channels.end())
@@ -577,6 +833,8 @@ Channel *Server::findChannel(const std::string &name)
 //oadouz
 Channel *Server::createChannel(const std::string &name)
 {
+    //si-hamou: Enforce the agreed global and per-client channel quotas before
+    // this allocation, and delete the object after its final member leaves.
     Channel *existingChannel = findChannel(name);
 
     if (existingChannel != NULL)

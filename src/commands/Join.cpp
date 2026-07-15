@@ -8,9 +8,12 @@
 #include "../include/Channel.hpp"
 
 
+//si-hamou
 JoinCommand::JoinCommand() {}
+//si-hamou
 JoinCommand::~JoinCommand() {}
 
+//si-hamou
 static bool    isValidChannelName(const std::string &name)
 {
     if(name.empty() || name.length() > 50) return false;
@@ -29,6 +32,10 @@ static bool    isValidChannelName(const std::string &name)
 }
     
 
+//si-hamou
+// Fix JOIN by handling comma-separated channels and keys, treating duplicate
+// JOIN as a no-op, rejecting ':' in names, applying IRC channel casemapping,
+// enforcing channel quotas, and splitting every 353 reply below 512 bytes.
 void JoinCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.empty())
@@ -111,6 +118,7 @@ client.sendMessage(":server 353 " + client.getNickname() + " = " + channelName +
 client.sendMessage(":server 366 " + client.getNickname() + " " + channelName + " :End of /NAMES list\r\n");
 
 }    
+//si-hamou
 Command* createJoinCommand() 
 { 
     return new JoinCommand(); 

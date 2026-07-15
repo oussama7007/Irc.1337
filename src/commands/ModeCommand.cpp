@@ -5,9 +5,16 @@
 #include <cstdlib> 
 #include <cstdio>
 #include <iostream>
+//si-hamou
 ModeCommand::ModeCommand() {}
+//si-hamou
 ModeCommand::~ModeCommand() {}
 
+//si-hamou
+// Fix MODE by validating the entire mode string and all required parameters
+// before mutating Channel state. Require an explicit sign, replace atoi with a
+// checked conversion, return real active modes for queries, and never apply a
+// valid prefix when a later mode or parameter is invalid.
 void ModeCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.empty())
@@ -130,4 +137,5 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     }
 }
 
+//si-hamou
 Command* createModeCommand() { return new ModeCommand(); }

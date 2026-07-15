@@ -34,10 +34,12 @@ class Server
         void        handleClientRead(int fd);
         void        handleClientWrite(int fd);
         void        processLine(Client *client, const std::string &rawLine);
+        void        expireUnregisteredClients();
         void        reapDeadClients();
         void        disconnectClient(int fd);
 
         Client      *getClientByFd(int fd);
+        std::size_t countClientsFromIp(const std::string &ip) const;
 
     public:
         Server(int port, const std::string &password);
@@ -47,6 +49,9 @@ class Server
 
         const std::string   &getPassword() const;
         Client              *findClientByNick(const std::string &nickname);
+        void                broadcastNicknameChange(Client *client,
+                                                    const std::string &oldNickname,
+                                                    const std::string &newNickname);
         Channel             *findChannel(const std::string &name);
         Channel             *createChannel(const std::string &name);
 };
