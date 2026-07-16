@@ -131,7 +131,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (!appliedModes.empty() && appliedModes != "+" && appliedModes != "-" && !flag_for_silent)
     {
-        std::string modeMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost MODE " + target + " " + appliedModes + appliedParams + "\r\n";
+        std::string modeMsg = ":" + client.getNickname() + "!~" + client.getUsername() + "@localhost MODE " + target + " " + appliedModes + appliedParams + "\r\n";
         channel->broadcastMessage(modeMsg);
         // client.sendMessage(modeMsg);
     }
