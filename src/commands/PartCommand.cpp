@@ -8,9 +8,7 @@ PartCommand::PartCommand() {}
 //si-hamou
 PartCommand::~PartCommand() {}
 
-//si-hamou
-// Fix PART by handling comma-separated channels and deleting a channel safely
-// when its final member leaves so stale modes and topics cannot survive.
+
 void PartCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.empty())
@@ -51,7 +49,7 @@ void PartCommand::execute(Server &server, Client &client, const std::vector<std:
 
 }
 
-//si-hamou
+
 Command* createPartCommand() 
 { 
     return new PartCommand(); 

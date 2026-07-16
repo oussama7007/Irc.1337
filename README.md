@@ -107,3 +107,22 @@ Start the server, then connect the bot to a channel:
 
 The bot registers as `ft_bot`, joins the requested channel, answers channel and
 direct messages, and supports `!help`, `!ping`, `!about`, and `!echo <text>`.
+
+
+
+===============
+[+] Client connected: fd=4, ip=127.0.0.1.
+[-] Client disconnected: fd=4, nickname=*, reason=registration timeout.
+===============
+test to chekc for leak 
+=============
+join #test
+:oussama!oo@localhost JOIN :#test
+:server 331 oussama #test :No topic is set
+:server 353 oussama = #test :@oussama
+:server 366 oussama #test :End of /NAMES list
+user al al al al
+:server 462 oussama :You may not reregister
+===============================
+:oussama!~oo@197.230.30.146 the ~
+================================
