@@ -52,7 +52,6 @@ Client::Client(int fd, const std::string &ip)
       _nickSet(false),
       _userSet(false),
       _failedPassAttempts(0),
-      _connectedAt(std::time(NULL)),
       _dead(false),
       _closing(false),
       _deadReason()
@@ -62,9 +61,6 @@ Client::Client(int fd, const std::string &ip)
 
     if (_ip.empty())
         throw std::invalid_argument("Client requires a non-empty IP address");
-
-    if (_connectedAt == static_cast<std::time_t>(-1))
-        throw std::runtime_error("time() failed while creating Client");
 }
 
 //oadouz
@@ -197,12 +193,6 @@ void Client::recordFailedPassAttempt()
 unsigned int Client::getFailedPassAttempts() const
 {
     return _failedPassAttempts;
-}
-
-//oadouz
-std::time_t Client::getConnectedAt() const
-{
-    return _connectedAt;
 }
 
 //oadouz

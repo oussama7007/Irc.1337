@@ -105,8 +105,8 @@ Start the server, then connect the bot to a channel:
 ./ircbot 127.0.0.1 6687 Passw@rd123 '#general'
 ```
 
-The bot registers as `ft_bot`, joins the requested channel, answers channel and
-direct messages, and supports `!help`, `!ping`, `!about`, and `!echo <text>`.
+The bot registers as `ft_bot`, joins the requested channel, and sends
+`Hello @nickname` whenever another user joins that channel.
 
 
 
