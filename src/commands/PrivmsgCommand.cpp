@@ -3,9 +3,14 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
 
+//si-hamou
 PrivmsgCommand::PrivmsgCommand() {}
+//si-hamou
 PrivmsgCommand::~PrivmsgCommand() {}
 
+//si-hamou
+// Fix PRIVMSG by rejecting an empty trailing message with 412 and processing
+// every comma-separated target independently without duplicating recipients.
 void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.empty())
@@ -54,6 +59,7 @@ void PrivmsgCommand::execute(Server &server, Client &client, const std::vector<s
     }
 }
 
+//si-hamou
 Command* createPrivmsgCommand() 
 { 
     return new PrivmsgCommand(); 

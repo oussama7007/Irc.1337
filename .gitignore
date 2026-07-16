@@ -1,0 +1,13 @@
+*.o
+*.d
+ircserv
+ircbot
+.DS_Store
+*.swp
+*.swo
+*~
+Md files/
+CHAR7/
+CHAR7 2/
+9RAYA/
+.playwright-mcp/

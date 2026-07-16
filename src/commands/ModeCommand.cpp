@@ -3,10 +3,18 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
 #include <cstdlib> 
+#include <cstdio>
 #include <iostream>
+//si-hamou
 ModeCommand::ModeCommand() {}
+//si-hamou
 ModeCommand::~ModeCommand() {}
 
+//si-hamou
+// Fix MODE by validating the entire mode string and all required parameters
+// before mutating Channel state. Require an explicit sign, replace atoi with a
+// checked conversion, return real active modes for queries, and never apply a
+// valid prefix when a later mode or parameter is invalid.
 void ModeCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.empty())
@@ -47,6 +55,8 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     std::string appliedModes = "";
     std::string appliedParams = "";
 
+    int flag_for_silent = 0 ;
+
     for (size_t i = 0; i < modeString.length(); ++i)
     {
         char c = modeString[i];
@@ -72,15 +82,20 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         else if (c == 'l') 
         {
+            if(paramIndex == params.size())
+                client.sendMessage(":server 461 " + client.getNickname() + " MODE :Not enough parameters\r\n");
             if (isPlus && paramIndex < params.size()) 
             {
-                channel->setUserLimit(std::atoi(params[paramIndex].c_str()));
-                printf("========================\n");
-                std::cout << std::atoi(params[paramIndex].c_str()) << std::endl;
-                printf("==========================\n");
-                appliedModes += 'l';
-                appliedParams += " " + params[paramIndex];
-                paramIndex++;
+                if(std::atoi(params[paramIndex].c_str()) <= 0 )
+                        flag_for_silent = 1;
+                else  
+                {
+                    channel->setUserLimit(std::atoi(params[paramIndex].c_str()));
+                    appliedModes += "+l";
+                    appliedParams += " " + params[paramIndex];
+                    paramIndex++;
+                }
+            
             }
             else if (!isPlus) 
             {
@@ -114,7 +129,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
     }
 
-    if (!appliedModes.empty() && appliedModes != "+" && appliedModes != "-")
+    if (!appliedModes.empty() && appliedModes != "+" && appliedModes != "-" && !flag_for_silent)
     {
         std::string modeMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost MODE " + target + " " + appliedModes + appliedParams + "\r\n";
         channel->broadcastMessage(modeMsg);
@@ -122,4 +137,5 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     }
 }
 
+//si-hamou
 Command* createModeCommand() { return new ModeCommand(); }

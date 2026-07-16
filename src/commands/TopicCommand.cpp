@@ -5,9 +5,14 @@
 
 
 
+//si-hamou
 TopicCommand::TopicCommand() {}
+//si-hamou
 TopicCommand::~TopicCommand() {}
 
+//si-hamou
+// Fix TOPIC by bounding the stored topic and every generated reply to the IRC
+// 512-byte frame limit. Empty-channel cleanup must remove the stored topic.
 void TopicCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     // need at least the channel name
@@ -63,6 +68,7 @@ void TopicCommand::execute(Server &server, Client &client, const std::vector<std
     client.sendMessage(msg);
 }
 
+//si-hamou
 Command* createTopicCommand()
 {
     return new TopicCommand();

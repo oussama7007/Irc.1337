@@ -1,23 +1,60 @@
-// src/commands/Pass.cpp  [PARTNER'S PART — placeholder]
-#include "Command.hpp"
-#include "Server.hpp"
-#include "Client.hpp"
+#include "../include/Pass.hpp"
+#include "../include/Server.hpp"
+#include "../include/Client.hpp"
 
-class PassCommand : public Command
+// Three failures give a normal client room to correct a typo while preventing
+// one anonymous socket from making unlimited password guesses.
+static const unsigned int MAX_FAILED_PASS_ATTEMPTS = 3;
+
+//oadouz
+PassCommand::PassCommand()
 {
-    public:
-        void execute(Server &server, Client &client, const std::vector<std::string> &params)
-        {
-            if (params.empty())
-            {
-                client.sendMessage(":server 461 * PASS :Not enough parameters\r\n");
-                return;
-            }
-            if (params[0] == server.getPassword())
-                client.setPassOk(true);
-            else
-                client.sendMessage(":server 464 * :Password incorrect\r\n");
-        }
-};
+}
 
-Command* createPassCommand() { return new PassCommand(); }
+//oadouz
+PassCommand::~PassCommand()
+{
+}
+
+//oadouz
+void PassCommand::execute(Server &server, Client &client,
+                          const std::vector<std::string> &params)
+{
+    std::string displayName = "*";
+
+    if (!client.getNickname().empty())
+        displayName = client.getNickname();
+
+    // I reject PASS after it succeeds because authentication must not change
+    // after the client enters the registration state machine.
+    if (client.hasPassOk())
+    {
+        client.sendMessage(":server 462 " + displayName + " :You may not reregister\r\n");
+        return;
+    }
+
+    if (params.empty() || params[0].empty())
+    {
+        client.sendMessage(":server 461 " + displayName
+                           + " PASS :Not enough parameters\r\n");
+        return;
+    }
+
+    if (params[0] == server.getPassword())
+    {
+        client.setPassOk(true);
+        return;
+    }
+
+    client.recordFailedPassAttempt();
+    client.sendMessage(":server 464 " + displayName + " :Password incorrect\r\n");
+
+    if (client.getFailedPassAttempts() >= MAX_FAILED_PASS_ATTEMPTS)
+        client.markClosing("too many invalid PASS attempts");
+}
+
+//oadouz
+Command *createPassCommand()
+{
+    return new PassCommand();
+}

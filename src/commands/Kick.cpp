@@ -3,9 +3,14 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
 
+//si-hamou
 KickCommand::KickCommand() {}
+//si-hamou
 KickCommand::~KickCommand() {}
 
+//si-hamou
+// Fix KICK so the issuer receives the successful KICK message too, and apply
+// the agreed list handling and IRC casemapping to channel and nickname targets.
 void KickCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.size() < 2)
@@ -59,6 +64,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
     channel->removeMember(targetClient);
 }
 
+//si-hamou
 Command* createKickCommand() 
 { 
     return new KickCommand(); 

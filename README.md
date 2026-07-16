@@ -100,4 +100,27 @@ ila kant mode #channel +l 0 ola +l abc khassk matele3ch chi message
 ils kant mode #channel +l khaasek tele3  :Not enough parameters
 
 
+mode -l no parameters : ila channel kant deja +l khassha tele3 message ila kant channel -l makhashach tele3 tachi message 
+
+
+
+
 =========================
+
+## Bonus bot
+
+Build the server and the standalone C++98 IRC bot:
+
+```sh
+make bonus
+```
+
+Start the server, then connect the bot to a channel:
+
+```sh
+./ircserv 6687 Passw@rd123
+./ircbot 127.0.0.1 6687 Passw@rd123 '#general'
+```
+
+The bot registers as `ft_bot`, joins the requested channel, answers channel and
+direct messages, and supports `!help`, `!ping`, `!about`, and `!echo <text>`.
