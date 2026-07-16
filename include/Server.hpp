@@ -46,7 +46,7 @@ class Server
         ~Server();
 
         void        run();
-
+        void        removeChannel(const std::string& name);
         const std::string   &getPassword() const;
         Client              *findClientByNick(const std::string &nickname);
         void                broadcastNicknameChange(Client *client,

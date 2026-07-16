@@ -833,3 +833,17 @@ Channel *Server::createChannel(const std::string &name)
     _channels[name] = newChannel;
     return newChannel;
 }
+
+// ana 
+void Server::removeChannel(const std::string& name)
+{
+    // ملاحظة للصديق ديالك: تأكد بلي السمية ديال الـ map عندك هي _channels 
+    // إلى كنتي مسميها channels بلا تيريط، بدلها هنا
+    std::map<std::string, Channel*>::iterator it = _channels.find(name);
+    
+    if (it != _channels.end())
+    {
+        delete it->second;   // 1. كنمسحو القناة من الميموري (تفادي Leaks)
+        _channels.erase(it); // 2. كنحيدوها من القائمة ديال السيرفر
+    }
+}

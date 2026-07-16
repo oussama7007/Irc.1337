@@ -54,10 +54,14 @@ static bool isValidPassword(const char *rawPassword)
 
     return true;
 }
-
+void    f()
+{
+    system("leak ircserv");
+}
 //oadouz
 int main(int argc, char **argv)
 {
+    // atexit(f);
     if (argv == NULL || argc != 3 || argv[0] == NULL)
     {
         std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
