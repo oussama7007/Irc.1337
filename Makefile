@@ -50,7 +50,7 @@ $(NAME): $(OBJS)
 $(BOT_NAME): $(BOT_OBJS)
 	@echo "Linking $(BOT_NAME)..."
 	@$(CXX) $(CXXFLAGS) $(BOT_OBJS) -o $(BOT_NAME)
-	@echo "Done! You can now run ./$(BOT_NAME) <host> <port> <password> <channel> [nickname]"
+	@echo "Done! You can now run ./$(BOT_NAME) <host> <port> <password> <channel>"
 
 %.o: %.cpp
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@

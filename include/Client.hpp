@@ -2,7 +2,6 @@
 
 #include <string>
 #include <cstddef>
-#include <ctime>
 
 class Client
 {
@@ -20,8 +19,6 @@ class Client
         bool        _nickSet;
         bool        _userSet;
         unsigned int _failedPassAttempts;
-
-        std::time_t _connectedAt;
 
         bool        _dead;
 
@@ -53,7 +50,6 @@ class Client
         bool                isRegistered() const;
         void                recordFailedPassAttempt();
         unsigned int        getFailedPassAttempts() const;
-        std::time_t         getConnectedAt() const;
 
         bool                appendToRecvBuffer(const char *data, std::size_t length);
         bool                extractLine(std::string &line);

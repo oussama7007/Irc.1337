@@ -8,7 +8,6 @@
 
 static const std::size_t MAX_PASSWORD_SIZE = 504;
 static const std::size_t MAX_CHANNEL_NAME_SIZE = 50;
-static const std::size_t MAX_NICKNAME_SIZE = 9;
 
 //oadouz
 static bool parseBotPort(const char *rawPort, int &portOut)
@@ -70,32 +69,11 @@ static bool isValidChannelName(const std::string &channel)
 }
 
 //oadouz
-static bool isValidBotNickname(const std::string &nickname)
-{
-    if (nickname.empty() || nickname.size() > MAX_NICKNAME_SIZE)
-        return false;
-
-    const std::string firstCharacters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]\\`_^{|}";
-    const std::string remainingCharacters = firstCharacters + "0123456789-";
-
-    if (firstCharacters.find(nickname[0]) == std::string::npos)
-        return false;
-
-    for (std::size_t i = 1; i < nickname.size(); ++i)
-    {
-        if (remainingCharacters.find(nickname[i]) == std::string::npos)
-            return false;
-    }
-    return true;
-}
-
-//oadouz
 int main(int argc, char **argv)
 {
-    if (argv == NULL || (argc != 5 && argc != 6))
+    if (argv == NULL || argc != 5)
     {
-        std::cerr << "Usage: ./ircbot <host> <port> <password> <channel> [nickname]"
+        std::cerr << "Usage: ./ircbot <host> <port> <password> <channel>"
                   << std::endl;
         std::cerr << "Example: ./ircbot 127.0.0.1 6687 Passw@rd123 '#general'"
                   << std::endl;
@@ -133,18 +111,9 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    std::string nickname = "ft_bot";
-    if (argc == 6)
-        nickname = argv[5];
-    if (!isValidBotNickname(nickname))
-    {
-        std::cerr << "Error: bot nickname is invalid." << std::endl;
-        return 1;
-    }
-
     try
     {
-        Bot bot(argv[1], port, argv[3], channel, nickname);
+        Bot bot(argv[1], port, argv[3], channel);
         bot.run();
     }
     catch (const std::exception &exception)

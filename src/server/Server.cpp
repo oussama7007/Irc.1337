@@ -16,7 +16,6 @@
 #include <cstring>
 #include <cctype>
 #include <algorithm>
-#include <ctime>
 #include <iostream>
 #include <stdexcept>
 
@@ -27,11 +26,6 @@ static const int LISTEN_BACKLOG = 128;
 // One recv() handles a bounded chunk so a busy client cannot monopolize one
 // event-loop iteration.
 static const std::size_t RECV_CHUNK_SIZE = 4096;
-
-// The timeout wakes poll regularly so clients cannot hold pre-registration
-// sockets forever without sending any data.
-static const int POLL_TIMEOUT_MS = 1000;
-static const std::time_t REGISTRATION_TIMEOUT_SECONDS = 30;
 
 // These limits preserve the tested 128-client local workload while placing a
 // hard bound on descriptors controlled by one address and by the whole server.
@@ -259,8 +253,7 @@ void Server::run()
         if (_pollFds.empty())
             throw std::runtime_error("poll() cannot run without the listening socket");
 
-        int readyCount = poll(&_pollFds[0], static_cast<nfds_t>(_pollFds.size()),
-                              POLL_TIMEOUT_MS);
+        int readyCount = poll(&_pollFds[0], static_cast<nfds_t>(_pollFds.size()), -1);
         if (readyCount < 0)
         {
 
@@ -302,7 +295,6 @@ void Server::run()
             }
         }
 
-        expireUnregisteredClients();
         reapDeadClients();
     }
 
@@ -600,39 +592,6 @@ void Server::processLine(Client *client, const std::string &rawLine)
     {
         std::cerr << "Error: command " << commandName << " threw an exception: " << e.what()
                   << ". Server will continue running." << std::endl;
-    }
-}
-
-//oadouz
-// I expire registration before reaping so anonymous sockets cannot retain one
-// descriptor forever without completing PASS, NICK, and USER.
-void Server::expireUnregisteredClients()
-{
-    std::time_t currentTime = std::time(NULL);
-
-    if (currentTime == static_cast<std::time_t>(-1))
-    {
-        std::cerr << "Warning: time() failed while checking registration deadlines."
-                  << std::endl;
-        return;
-    }
-
-    for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
-    {
-        Client *client = it->second;
-
-        if (client == NULL || client->isDead() || client->isClosing()
-            || client->isRegistered())
-            continue;
-
-        if (currentTime < client->getConnectedAt())
-            continue;
-
-        if (std::difftime(currentTime, client->getConnectedAt())
-            >= static_cast<double>(REGISTRATION_TIMEOUT_SECONDS))
-        {
-            client->markDead("registration timeout");
-        }
     }
 }
 

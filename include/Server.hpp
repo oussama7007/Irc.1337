@@ -34,7 +34,6 @@ class Server
         void        handleClientRead(int fd);
         void        handleClientWrite(int fd);
         void        processLine(Client *client, const std::string &rawLine);
-        void        expireUnregisteredClients();
         void        reapDeadClients();
         void        disconnectClient(int fd);
 
