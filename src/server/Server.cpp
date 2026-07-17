@@ -44,8 +44,7 @@ static void closeSocket(int fd, const std::string &context)
 
     if (close(fd) < 0)
     {
-        std::cerr << "Warning: close() failed for " << context << ", fd=" << fd
-                  << ": " << std::strerror(errno) << "." << std::endl;
+        std::cerr << "Warning: close() failed for " << context << ", fd=" << fd << ": " << std::strerror(errno) << "." << std::endl;
     }
 }
 
@@ -156,29 +155,23 @@ void Server::setupSignals()
     ignoreAction.sa_handler = SIG_IGN;
 
     if (sigemptyset(&ignoreAction.sa_mask) < 0)
-        throw std::runtime_error(std::string("sigemptyset() failed for SIGPIPE: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("sigemptyset() failed for SIGPIPE: ") + std::strerror(errno));
 
     if (sigaction(SIGPIPE, &ignoreAction, NULL) < 0)
-        throw std::runtime_error(std::string("sigaction(SIGPIPE) failed: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("sigaction(SIGPIPE) failed: ") + std::strerror(errno));
 
     shutdownAction.sa_handler = handleShutdownSignal;
     if (sigemptyset(&shutdownAction.sa_mask) < 0)
-        throw std::runtime_error(std::string("sigemptyset() failed for shutdown signals: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("sigemptyset() failed for shutdown signals: ") + std::strerror(errno));
 
     shutdownAction.sa_flags = 0;
 
     if (sigaction(SIGINT, &shutdownAction, NULL) < 0)
-        throw std::runtime_error(std::string("sigaction(SIGINT) failed: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("sigaction(SIGINT) failed: ") + std::strerror(errno));
     if (sigaction(SIGTERM, &shutdownAction, NULL) < 0)
-        throw std::runtime_error(std::string("sigaction(SIGTERM) failed: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("sigaction(SIGTERM) failed: ") + std::strerror(errno));
     if (sigaction(SIGQUIT, &shutdownAction, NULL) < 0)
-        throw std::runtime_error(std::string("sigaction(SIGQUIT) failed: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("sigaction(SIGQUIT) failed: ") + std::strerror(errno));
 }
 
 //oadouz
@@ -201,14 +194,11 @@ void Server::setupSocket()
     std::memset(&serverAddress, 0, sizeof(serverAddress));
 
     serverAddress.sin_family = AF_INET;
-
     serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-
     serverAddress.sin_port = htons(static_cast<unsigned short>(_port));
 
     if (bind(_listenFd, reinterpret_cast<struct sockaddr*>(&serverAddress), sizeof(serverAddress)) < 0)
-        throw std::runtime_error(std::string("bind() failed: ") + std::strerror(errno)
-                                 + " (the port may be in use, or ports below 1024 may require elevated privileges)");
+        throw std::runtime_error(std::string("bind() failed: ") + std::strerror(errno) + " (the port may be in use, or ports below 1024 may require elevated privileges)");
 
     if (listen(_listenFd, LISTEN_BACKLOG) < 0)
         throw std::runtime_error(std::string("listen() failed: ") + std::strerror(errno));
@@ -353,15 +343,13 @@ void Server::acceptNewClient()
         if (acceptError == EAGAIN || acceptError == EWOULDBLOCK || acceptError == EINTR)
             return;
 
-        std::cerr << "Warning: accept() failed: " << std::strerror(acceptError)
-                  << ". Continuing to listen for connections." << std::endl;
+        std::cerr << "Warning: accept() failed: " << std::strerror(acceptError) << ". Continuing to listen for connections." << std::endl;
         return;
     }
 
     if (_clients.size() >= MAX_TOTAL_CLIENTS)
     {
-        std::cerr << "Warning: rejecting fd=" << clientFd
-                  << " because the global client limit was reached." << std::endl;
+        std::cerr << "Warning: rejecting fd=" << clientFd << " because the global client limit was reached." << std::endl;
         closeSocket(clientFd, "rejected client socket");
         return;
     }
@@ -369,8 +357,7 @@ void Server::acceptNewClient()
     // The subject permits fcntl() only with F_SETFL and O_NONBLOCK.
     if (fcntl(clientFd, F_SETFL, O_NONBLOCK) < 0)
     {
-        std::cerr << "Error: fcntl(F_SETFL) failed for fd=" << clientFd << ": "
-                  << std::strerror(errno) << ". Closing connection." << std::endl;
+        std::cerr << "Error: fcntl(F_SETFL) failed for fd=" << clientFd << ": " << std::strerror(errno) << ". Closing connection." << std::endl;
         closeSocket(clientFd, "client socket after fcntl failure");
         return;
     }
@@ -380,8 +367,7 @@ void Server::acceptNewClient()
 
     if (ipText == NULL)
     {
-        std::cerr << "Error: inet_ntop() failed for fd=" << clientFd << ": "
-                  << std::strerror(errno) << ". Closing connection." << std::endl;
+        std::cerr << "Error: inet_ntop() failed for fd=" << clientFd << ": " << std::strerror(errno) << ". Closing connection." << std::endl;
         closeSocket(clientFd, "client socket after inet_ntop failure");
         return;
     }
@@ -390,8 +376,7 @@ void Server::acceptNewClient()
 
     if (countClientsFromIp(clientIp) >= MAX_CLIENTS_PER_IP)
     {
-        std::cerr << "Warning: rejecting a connection from " << clientIp
-                  << " because the per-IP client limit was reached." << std::endl;
+        std::cerr << "Warning: rejecting a connection from " << clientIp << " because the per-IP client limit was reached." << std::endl;
         closeSocket(clientFd, "client socket rejected by per-IP limit");
         return;
     }
@@ -411,8 +396,7 @@ void Server::acceptNewClient()
     catch (const std::exception &e)
     {
 
-        std::cerr << "Error: failed to register new client (" << e.what()
-                  << "). Rolling back connection." << std::endl;
+        std::cerr << "Error: failed to register new client (" << e.what() << "). Rolling back connection." << std::endl;
         if (newClient != NULL)
         {
             _clients.erase(clientFd);
@@ -462,9 +446,7 @@ void Server::handleClientRead(int fd)
 
     if (!client->appendToRecvBuffer(chunkBuffer, static_cast<std::size_t>(bytesRead)))
     {
-        std::cerr << "Error: client fd=" << fd
-                  << " exceeded the receive buffer limit without a newline. Disconnecting client."
-                  << std::endl;
+        std::cerr << "Error: client fd=" << fd << " exceeded the receive buffer limit without a newline. Disconnecting client." << std::endl;
         client->markDead("input flood: recv buffer overflow");
         return;
     }
@@ -590,8 +572,7 @@ void Server::processLine(Client *client, const std::string &rawLine)
     }
     catch (const std::exception &e)
     {
-        std::cerr << "Error: command " << commandName << " threw an exception: " << e.what()
-                  << ". Server will continue running." << std::endl;
+        std::cerr << "Error: command " << commandName << " threw an exception: " << e.what() << ". Server will continue running." << std::endl;
     }
 }
 
@@ -625,8 +606,7 @@ void Server::disconnectClient(int fd)
     Client *client = clientIt->second;
 
     std::string displayName = getClientDisplayName(client);
-    std::cout << "[-] Client disconnected: fd=" << fd << ", nickname=" << displayName
-              << ", reason=" << client->getDeadReason() << "." << std::endl;
+    std::cout << "[-] Client disconnected: fd=" << fd << ", nickname=" << displayName << ", reason=" << client->getDeadReason() << "." << std::endl;
 
     if (client->isRegistered())
     {
@@ -634,8 +614,7 @@ void Server::disconnectClient(int fd)
         if (quitReason.empty())
             quitReason = "Client Quit";
 
-        std::string quitMessage = ":" + client->getNickname() + "!" + client->getUsername()
-                                  + "@localhost QUIT :" + quitReason + "\r\n";
+        std::string quitMessage = ":" + client->getNickname() + "!" + client->getUsername() + "@localhost QUIT :" + quitReason + "\r\n";
         std::vector<Client*> recipients;
 
         for (std::map<std::string, Channel*>::iterator chIt = _channels.begin(); chIt != _channels.end(); ++chIt)
@@ -741,8 +720,7 @@ void Server::broadcastNicknameChange(Client *client,
     if (client == NULL || oldNickname.empty() || newNickname.empty())
         return;
 
-    std::string message = ":" + oldNickname + "!" + client->getUsername()
-                        + "@localhost NICK :" + newNickname + "\r\n";
+    std::string message = ":" + oldNickname + "!" + client->getUsername() + "@localhost NICK :" + newNickname + "\r\n";
     std::vector<Client*> recipients;
     recipients.push_back(client);
 
