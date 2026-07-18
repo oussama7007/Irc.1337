@@ -151,6 +151,6 @@ mode #a +k sa,id
 privmsg sbaxii,oussama waaaaaaaaa
 :server 401 said sbaxii,oussama :No such nick/channel
 
-
+MODE #one -k+k old_pass new_pass
 
 ==================

@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
-#include <cctype> // ضرورية باش نخدمو بـ isalpha
+#include <cctype> 
 
 ModeCommand::ModeCommand() {}
 ModeCommand::~ModeCommand() {}
@@ -30,7 +30,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    // إرسال المودات الحالية ملي اليوزر كيكتب غير MODE #channel
     if (params.size() == 1)
     {
         std::string activeModes = "+";
@@ -87,7 +86,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         else if (c == 'i') 
         { 
-            // كنطبقو المود غير يلا كانت الحالة غتتبدل بصح
             if (channel->isInviteOnly() != isPlus)
             {
                 channel->setInviteOnly(isPlus); 
@@ -101,7 +99,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         else if (c == 't') 
         { 
-            // كنطبقو المود غير يلا كانت الحالة غتتبدل بصح
             if (channel->isTopicRestricted() != isPlus)
             {
                 channel->setTopicRestricted(isPlus); 
@@ -120,7 +117,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 if (paramIndex < params.size()) 
                 {
                     std::string key = params[paramIndex++];
-                    // كنزيدو الباسورد غير يلا كانت القناة مافيهاش باسورد
+                    
                     if (channel->getPassword().empty())
                     {
                         channel->setPassword(key);
@@ -129,21 +126,25 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                         appliedModes += 'k';
                         appliedParams += " " + key;
                     }
+                    else
+                    {
+                        // السيرفر كيرفض تغيير الباسورد مباشرة كيما كيقول الـ RFC
+                        client.sendMessage(":server 467 " + client.getNickname() + " " + target + " :Channel key already set\r\n");
+                    }
                 }
             }
-            else // في حالة الحذف (-k)
+            else 
             {
                 if (paramIndex < params.size()) 
                 {
                     std::string key = params[paramIndex++];
-                    // كنحيدو الباسورد غير يلا عطانا اليوزر الباسورد القديم الصحيح
+                    
                     if (channel->getPassword() == key)
                     {
                         channel->setPassword("");
                         
                         if (lastSign != '-') { lastSign = '-'; appliedModes += '-'; }
                         appliedModes += 'k';
-                        // Libera كيعوض السمية ديال الباسورد بـ * للحماية
                         appliedParams += " *"; 
                     }
                 }
@@ -156,7 +157,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 if (paramIndex < params.size()) 
                 {
                     int limit = std::atoi(params[paramIndex++].c_str());
-                    // كنزيدو الليميت غير يلا كان كبر من 0 ومبدل على الليميت القديم
                     if (limit > 0 && channel->getUserLimit() != (size_t)limit)
                     {
                         channel->setUserLimit(limit);
@@ -172,7 +172,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
             }
             else 
             {
-                // كنحيدو الليميت غير يلا كان ديجا كاين
                 if (channel->getUserLimit() > 0)
                 {
                     channel->setUserLimit(0);
@@ -191,7 +190,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 
                 if (targetClient && channel->isMember(targetClient))
                 {
-                    // كنتأكدو واش اليوزر ديجا Operator ولا لا باش ما نعاودوش العملية
                     bool isOp = channel->isOperator(targetClient);
                     
                     if ((isPlus && !isOp) || (!isPlus && isOp))
@@ -216,7 +214,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         else
         {
-            // Libera كيتجاهل الرموز بحال = بصمت، وكيجاوب غير على الحروف الغالطة
             if (std::isalpha(c))
             {
                 client.sendMessage(":server 472 " + client.getNickname() + " " + std::string(1, c) + " :is unknown mode char to me\r\n");
@@ -224,12 +221,11 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         }
     }
 
-    // إرسال Broadcast للجميع غير يلا تبدلات شي حاجة بصح
     if (!appliedModes.empty())
     {
         std::string modeMsg = ":" + client.getNickname() + "!~" + client.getUsername() + "@localhost MODE " + target + " " + appliedModes + appliedParams + "\r\n";
         channel->broadcastMessage(modeMsg);
     }
 }
-//si-hamou
+
 Command* createModeCommand() { return new ModeCommand(); }
