@@ -72,7 +72,7 @@ Client::~Client()
         if (close(_fd) < 0)
         {
             std::cerr << "Warning: close() failed for client fd=" << _fd << ": "
-                      << std::strerror(errno) << "." << std::endl;
+ << std::strerror(errno) << "." << std::endl;
         }
         _fd = -1;
     }
@@ -98,8 +98,7 @@ void Client::sendMessage(const std::string &message)
 
     if (!isValidOutboundMessage(message))
     {
-        std::cerr << "Internal error: refusing an invalid outbound IRC message for fd="
-                  << _fd << "." << std::endl;
+        std::cerr << "Internal error: refusing an invalid outbound IRC message for fd=" << _fd << "." << std::endl;
         return;
     }
 
@@ -107,8 +106,7 @@ void Client::sendMessage(const std::string &message)
         || message.size() > MAX_SEND_BUFFER - _sendBuffer.size())
     {
 
-        std::cerr << "Error: client fd=" << _fd
-                  << " exceeded the send buffer limit. Disconnecting client." << std::endl;
+        std::cerr << "Error: client fd=" << _fd << " exceeded the send buffer limit. Disconnecting client." << std::endl;
         markDead("send buffer overflow (slow or stuck client)");
         return;
     }
@@ -232,8 +230,7 @@ bool Client::extractLine(std::string &line)
     if (wireSize > MAX_IRC_MESSAGE_SIZE)
     {
         _recvBuffer.erase(0, wireSize);
-        std::cerr << "Error: client fd=" << _fd
-                  << " sent an IRC message longer than 512 bytes." << std::endl;
+        std::cerr << "Error: client fd=" << _fd << " sent an IRC message longer than 512 bytes." << std::endl;
         markDead("IRC message exceeds 512-byte limit");
         return false;
     }
@@ -249,7 +246,7 @@ bool Client::extractLine(std::string &line)
         if (line[i] == '\0' || line[i] == '\r')
         {
             std::cerr << "Error: client fd=" << _fd
-                      << " sent a forbidden control byte in an IRC message." << std::endl;
+ << " sent a forbidden control byte in an IRC message." << std::endl;
             markDead("forbidden control byte in IRC message");
             line.clear();
             return false;
@@ -276,8 +273,7 @@ void Client::consumeSendBuffer(std::size_t bytesSent)
 {
     if (bytesSent > _sendBuffer.size())
     {
-        std::cerr << "Internal error: bytes sent exceeded the queued buffer for fd="
-                  << _fd << "." << std::endl;
+        std::cerr << "Internal error: bytes sent exceeded the queued buffer for fd=" << _fd << "." << std::endl;
         markDead("invalid send-buffer accounting");
         return;
     }
