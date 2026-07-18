@@ -64,7 +64,7 @@ static void handleShutdownSignal(int signalNumber)
 }
 
 //si-hamou
-// Keep these factories with the dispatcher and command-handler implementation.
+
 Command *createPartCommand();
 Command *createPrivmsgCommand();
 Command *createKickCommand();
@@ -72,7 +72,7 @@ Command *createInviteCommand();
 Command *createModeCommand();
 
 //si-hamou
-// This normalization is part of command dispatch, not server transport.
+
 static std::string toUpperCase(const std::string &text)
 {
 	std::string result = text;
@@ -208,8 +208,7 @@ void Server::setupSocket()
 }
 
 //si-hamou
-// This registry belongs to command dispatch. Validate every returned factory
-// pointer before inserting it so a missing handler cannot be dereferenced.
+
 void Server::setupCommands()
 {
 	_commands["PASS"] = createPassCommand();
@@ -503,9 +502,7 @@ void Server::handleClientWrite(int fd)
 }
 
 //si-hamou
-// Fix CAP negotiation state and keep QUIT reasons unchanged instead of adding
-// a second "Quit:" prefix. Replace its ternary expressions with explicit if
-// statements to follow the agreed project style. This dispatcher is Si Hamou's.
+
 void Server::processLine(Client *client, const std::string &rawLine)
 {
 
@@ -517,7 +514,7 @@ void Server::processLine(Client *client, const std::string &rawLine)
 	if (message.command.empty())
 		return;
 
-	std::string commandName = toUpperCase(message.command);
+	std::string commandName = message.command;
 
 	if (commandName == "CAP")
 	{

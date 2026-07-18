@@ -3,14 +3,13 @@
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
 
-//si-hamou
+
 InviteCommand::InviteCommand() {}
-//si-hamou
+
 InviteCommand::~InviteCommand() {}
  
 //si-hamou
-// Fix INVITE so the inviter must always be a channel operator as required by
-// the subject, not only while +i is active. Do not preserve weaker invitations.
+
 void InviteCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.size() < 2)

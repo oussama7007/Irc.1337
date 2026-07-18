@@ -155,7 +155,8 @@ MODE #one -k+k old_pass new_pass
 
 ==================
 
-
+DCC with nc 
+============
 
 
 

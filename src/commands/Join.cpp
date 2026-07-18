@@ -8,7 +8,7 @@ JoinCommand::JoinCommand() {}
 
 JoinCommand::~JoinCommand() {}
 
-// فانكشن التقسيم (كتقسم سترينغ بالفاصلة)
+
 static std::vector<std::string> splitString(const std::string &str, char delimiter)
 {
     std::vector<std::string> tokens;
@@ -25,7 +25,7 @@ static std::vector<std::string> splitString(const std::string &str, char delimit
     return tokens;
 }
 
-// التأكد من صحة اسم القناة
+
 static bool isValidChannelName(const std::string &name)
 {
     if (name.empty()) 
@@ -54,10 +54,10 @@ static bool isValidChannelName(const std::string &name)
     return true;
 }
     
-// تنفيذ الكوماند JOIN
+
 void JoinCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
-    // 1. التأكد بلي اليوزر عطانا على الأقل سمية القناة
+  
     if (params.empty())
     {
         client.sendMessage(":server 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n");
@@ -65,9 +65,6 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
     }
     if (params[0] == "0")
     {
-        // هنا خاصك تدير loop على كاع القنوات اللي في السيرفر 
-        // وتقلب واش هاد اليوزر عضو فيهم. يلا كان عضو، كدير ليه PART.
-        
         std::map<std::string, Channel*> allChannels = server.getChannels();
         std::map<std::string, Channel*>::iterator it;
         
@@ -77,26 +74,26 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
             
             if (channel->isMember(&client))
             {
-                // كنصاوبو ميساج الخروج
+                
                 std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PART " + channel->getName() + " :Left all channels\r\n";
                 
-                // كنصيفطو الميساج للناس اللي بقاو في القناة
+             
                 channel->broadcastMessage(partMsg, &client);
                 
-                // كنصيفطو الميساج لليوزر براسو باش الـ Client ديالو يسد الشاشة
+                
                 client.sendMessage(partMsg);
                 
-                // كنحيدو اليوزر من القناة
+               
                 channel->removeMember(&client);
                 
-                // (ما تنساش تعيط للفانكشن اللي كتمسح القناة يلا بقات خاوية، بحال اللي درنا في PART)
+              
                 if (channel->getMembersCount() == 0)
                 {
                     server.removeChannel(channel->getName());
                 }
             }
         }
-        return; // كنخرجو حيت الكوماند سالات هنا
+        return; 
     }
     // 2. تقسيم القنوات
     std::vector<std::string> channels = splitString(params[0], ',');
