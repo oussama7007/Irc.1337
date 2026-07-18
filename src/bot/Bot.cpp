@@ -21,20 +21,12 @@ static void closeBotSocket(int fd)
 {
     if (fd >= 0 && close(fd) < 0)
     {
-        std::cerr << "Warning: bot close() failed: "
-                  << std::strerror(errno) << "." << std::endl;
+        std::cerr << "Warning: bot close() failed: " << std::strerror(errno) << "." << std::endl;
     }
 }
 
 //oadouz
-Bot::Bot(const std::string &host, int port, const std::string &password,
-         const std::string &channel)
-    : _host(host),
-      _port(port),
-      _password(password),
-      _channel(channel),
-      _socketFd(-1),
-      _receiveBuffer()
+Bot::Bot(const std::string &host, int port, const std::string &password, const std::string &channel) : _host(host), _port(port), _password(password), _channel(channel), _socketFd(-1), _receiveBuffer()
 {
     if (_host.empty() || _password.empty() || _channel.empty())
         throw std::invalid_argument("bot arguments must not be empty");
@@ -65,17 +57,13 @@ void Bot::connectToServer()
     std::ostringstream portStream;
     portStream << _port;
 
-    int result = getaddrinfo(_host.c_str(), portStream.str().c_str(),
-                             &hints, &addresses);
+    int result = getaddrinfo(_host.c_str(), portStream.str().c_str(), &hints, &addresses);
     if (result != 0)
-        throw std::runtime_error(std::string("getaddrinfo() failed: ")
-                                 + gai_strerror(result));
+        throw std::runtime_error(std::string("getaddrinfo() failed: ") + gai_strerror(result));
 
-    for (struct addrinfo *address = addresses; address != NULL;
-         address = address->ai_next)
+    for (struct addrinfo *address = addresses; address != NULL; address = address->ai_next)
     {
-        int candidateFd = socket(address->ai_family, address->ai_socktype,
-                                 address->ai_protocol);
+        int candidateFd = socket(address->ai_family, address->ai_socktype, address->ai_protocol);
         if (candidateFd < 0)
             continue;
 
@@ -110,14 +98,12 @@ void Bot::sendLine(const std::string &line)
 
     while (sentBytes < message.size())
     {
-        ssize_t result = send(_socketFd, message.c_str() + sentBytes,
-                              message.size() - sentBytes, 0);
+        ssize_t result = send(_socketFd, message.c_str() + sentBytes, message.size() - sentBytes, 0);
         if (result < 0)
         {
             if (errno == EINTR)
                 continue;
-            throw std::runtime_error(std::string("bot send() failed: ")
-                                     + std::strerror(errno));
+            throw std::runtime_error(std::string("bot send() failed: ") + std::strerror(errno));
         }
         if (result == 0)
             throw std::runtime_error("bot send() returned zero bytes");
@@ -165,9 +151,7 @@ void Bot::greetJoinedUser(const std::string &line)
     std::size_t joinPosition = line.find(" JOIN ");
     std::size_t nicknameEnd = line.find('!');
 
-    if (joinPosition == std::string::npos
-        || nicknameEnd == std::string::npos
-        || nicknameEnd > joinPosition)
+    if (joinPosition == std::string::npos || nicknameEnd == std::string::npos || nicknameEnd > joinPosition)
         return;
 
     std::string nickname = line.substr(1, nicknameEnd - 1);
@@ -221,13 +205,11 @@ void Bot::receiveMessages()
         {
             if (errno == EINTR)
                 continue;
-            throw std::runtime_error(std::string("bot recv() failed: ")
-                                     + std::strerror(errno));
+            throw std::runtime_error(std::string("bot recv() failed: ") + std::strerror(errno));
         }
 
         std::size_t receivedBytes = static_cast<std::size_t>(result);
-        if (_receiveBuffer.size() > MAX_RECEIVE_BUFFER_SIZE
-            || receivedBytes > MAX_RECEIVE_BUFFER_SIZE - _receiveBuffer.size())
+        if (_receiveBuffer.size() > MAX_RECEIVE_BUFFER_SIZE || receivedBytes > MAX_RECEIVE_BUFFER_SIZE - _receiveBuffer.size())
             throw std::runtime_error("bot receive buffer limit exceeded");
 
         _receiveBuffer.append(chunk, receivedBytes);
@@ -242,16 +224,14 @@ void Bot::receiveMessages()
 void Bot::run()
 {
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
-        throw std::runtime_error(std::string("bot signal(SIGPIPE) failed: ")
-                                 + std::strerror(errno));
+        throw std::runtime_error(std::string("bot signal(SIGPIPE) failed: ") + std::strerror(errno));
 
     connectToServer();
     sendLine("PASS :" + _password);
     sendLine(std::string("NICK ") + BOT_NICKNAME);
     sendLine("USER ftbot 0 * :ft_irc bonus bot");
 
-    std::cout << "[bot] Connected as " << BOT_NICKNAME
-              << " and waiting for users in " << _channel << "." << std::endl;
+    std::cout << "[bot] Connected as " << BOT_NICKNAME << " and waiting for users in " << _channel << "." << std::endl;
 
     receiveMessages();
 }

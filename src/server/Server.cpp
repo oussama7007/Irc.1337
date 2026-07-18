@@ -108,10 +108,7 @@ static std::string toIrcLowerCase(const std::string &text)
 }
 
 //oadouz
-Server::Server(int port, const std::string &password)
-	: _port(port),
-	  _password(password),
-	  _listenFd(-1)
+Server::Server(int port, const std::string &password) : _port(port), _password(password), _listenFd(-1)
 {
 	if (_port < 1 || _port > 65535)
 		throw std::invalid_argument("server port must be between 1 and 65535");
@@ -626,9 +623,7 @@ void Server::disconnectClient(int fd)
 			std::vector<Client*> members = channel->getMembers();
 			for (std::size_t i = 0; i < members.size(); ++i)
 			{
-				if (members[i] != client
-					&& std::find(recipients.begin(), recipients.end(), members[i])
-					   == recipients.end())
+				if (members[i] != client && std::find(recipients.begin(), recipients.end(), members[i]) == recipients.end())
 				{
 					recipients.push_back(members[i]);
 				}
@@ -675,8 +670,7 @@ std::size_t Server::countClientsFromIp(const std::string &ip) const
 		return 0;
 
 	std::size_t count = 0;
-	for (std::map<int, Client*>::const_iterator it = _clients.begin();
-		 it != _clients.end(); ++it)
+	for (std::map<int, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second != NULL && !it->second->isDead() && it->second->getIp() == ip)
 			++count;
@@ -702,8 +696,7 @@ Client *Server::findClientByNick(const std::string &nickname)
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 
-		if (!it->second->isDead()
-			&& toIrcLowerCase(it->second->getNickname()) == normalizedNickname)
+		if (!it->second->isDead() && toIrcLowerCase(it->second->getNickname()) == normalizedNickname)
 			return it->second;
 	}
 	return NULL;
@@ -712,9 +705,7 @@ Client *Server::findClientByNick(const std::string &nickname)
 //oadouz
 // I send one NICK event per affected client because two users can share more
 // than one channel and must not receive the same identity change twice.
-void Server::broadcastNicknameChange(Client *client,
-									 const std::string &oldNickname,
-									 const std::string &newNickname)
+void Server::broadcastNicknameChange(Client *client, const std::string &oldNickname, const std::string &newNickname)
 {
 	if (client == NULL || oldNickname.empty() || newNickname.empty())
 		return;
@@ -723,8 +714,7 @@ void Server::broadcastNicknameChange(Client *client,
 	std::vector<Client*> recipients;
 	recipients.push_back(client);
 
-	for (std::map<std::string, Channel*>::iterator channelIt = _channels.begin();
-		 channelIt != _channels.end(); ++channelIt)
+	for (std::map<std::string, Channel*>::iterator channelIt = _channels.begin(); channelIt != _channels.end(); ++channelIt)
 	{
 		Channel *channel = channelIt->second;
 

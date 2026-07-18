@@ -16,8 +16,7 @@ static bool isValidUsername(const std::string &username)
 
     for (std::size_t i = 0; i < username.size(); ++i)
     {
-        if (username[i] == '@' || username[i] == '!' || username[i] == ' '
-            || username[i] == '\0' || username[i] == '\r' || username[i] == '\n')
+        if (username[i] == '@' || username[i] == '!' || username[i] == ' ' || username[i] == '\0' || username[i] == '\r' || username[i] == '\n')
             return false;
     }
     return true;
@@ -57,8 +56,7 @@ void UserCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (!isValidUsername(params[0]))
     {
-        client.sendMessage(":server 468 " + displayName + " " + params[0]
-                           + " :Invalid username\r\n");
+        client.sendMessage(":server 468 " + displayName + " " + params[0] + " :Invalid username\r\n");
         return;
     }
 
@@ -67,9 +65,7 @@ void UserCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (client.isRegistered())
     {
-        client.sendMessage(":server 001 " + client.getNickname()
-                           + " :Welcome to the ft_irc Network, " + client.getNickname()
-                           + "!" + client.getUsername() + "@localhost\r\n");
+        client.sendMessage(":server 001 " + client.getNickname() + " :Welcome to the ft_irc Network, " + client.getNickname() + "!" + client.getUsername() + "@localhost\r\n");
     }
 }
 

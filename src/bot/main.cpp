@@ -35,8 +35,7 @@ static bool parseBotPort(const char *rawPort, int &portOut)
 //oadouz
 static bool containsLineControl(const std::string &value)
 {
-    return value.find('\r') != std::string::npos
-        || value.find('\n') != std::string::npos;
+    return value.find('\r') != std::string::npos || value.find('\n') != std::string::npos;
 }
 
 //oadouz
@@ -61,8 +60,7 @@ static bool isValidChannelName(const std::string &channel)
 
     for (std::size_t i = 0; i < channel.size(); ++i)
     {
-        if (channel[i] == ' ' || channel[i] == ',' || channel[i] == ':'
-            || channel[i] == 7 || channel[i] == '\r' || channel[i] == '\n')
+        if (channel[i] == ' ' || channel[i] == ',' || channel[i] == ':' || channel[i] == 7 || channel[i] == '\r' || channel[i] == '\n')
             return false;
     }
     return true;
@@ -73,10 +71,8 @@ int main(int argc, char **argv)
 {
     if (argv == NULL || argc != 5)
     {
-        std::cerr << "Usage: ./ircbot <host> <port> <password> <channel>"
-                  << std::endl;
-        std::cerr << "Example: ./ircbot 127.0.0.1 6687 Passw@rd123 '#general'"
-                  << std::endl;
+        std::cerr << "Usage: ./ircbot <host> <port> <password> <channel>" << std::endl;
+        std::cerr << "Example: ./ircbot 127.0.0.1 6687 Passw@rd123 '#general'" << std::endl;
         return 1;
     }
 
@@ -92,22 +88,19 @@ int main(int argc, char **argv)
     int port = 0;
     if (!parseBotPort(argv[2], port))
     {
-        std::cerr << "Error: bot port must be a number between 1 and 65535."
-                  << std::endl;
+        std::cerr << "Error: bot port must be a number between 1 and 65535." << std::endl;
         return 1;
     }
     if (!isValidBotPassword(argv[3]))
     {
-        std::cerr << "Error: bot password must contain 1 to 504 characters without CR or LF."
-                  << std::endl;
+        std::cerr << "Error: bot password must contain 1 to 504 characters without CR or LF." << std::endl;
         return 1;
     }
 
     std::string channel(argv[4]);
     if (!isValidChannelName(channel))
     {
-        std::cerr << "Error: bot channel must be a valid # or & channel name."
-                  << std::endl;
+        std::cerr << "Error: bot channel must be a valid # or & channel name." << std::endl;
         return 1;
     }
 

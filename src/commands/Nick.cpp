@@ -12,8 +12,7 @@ static bool isValidNickname(const std::string &nickname)
     if (nickname.empty() || nickname.length() > MAX_NICKNAME_LENGTH)
         return false;
 
-    const std::string validFirstCharacters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]\\`_^{|}";
+    const std::string validFirstCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]\\`_^{|}";
     const std::string validRemainingCharacters = validFirstCharacters + "0123456789-";
 
     if (validFirstCharacters.find(nickname[0]) == std::string::npos)
@@ -57,16 +56,14 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (!isValidNickname(newNickname))
     {
-        client.sendMessage(":server 432 " + currentNickname + " " + newNickname
-                           + " :Erroneous nickname\r\n");
+        client.sendMessage(":server 432 " + currentNickname + " " + newNickname + " :Erroneous nickname\r\n");
         return;
     }
 
     Client *nicknameOwner = server.findClientByNick(newNickname);
     if (nicknameOwner != NULL && nicknameOwner != &client)
     {
-        client.sendMessage(":server 433 " + currentNickname + " " + newNickname
-                           + " :Nickname is already in use\r\n");
+        client.sendMessage(":server 433 " + currentNickname + " " + newNickname + " :Nickname is already in use\r\n");
         return;
     }
 
@@ -83,9 +80,7 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
     // second welcome reply to an already registered client.
     if (!wasRegistered && client.isRegistered())
     {
-        client.sendMessage(":server 001 " + client.getNickname()
-                           + " :Welcome to the ft_irc Network, " + client.getNickname()
-                           + "!" + client.getUsername() + "@localhost\r\n");
+        client.sendMessage(":server 001 " + client.getNickname() + " :Welcome to the ft_irc Network, " + client.getNickname() + "!" + client.getUsername() + "@localhost\r\n");
     }
 }
 

@@ -17,8 +17,7 @@ PassCommand::~PassCommand()
 }
 
 //oadouz
-void PassCommand::execute(Server &server, Client &client,
-                          const std::vector<std::string> &params)
+void PassCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     std::string displayName = "*";
 
@@ -35,8 +34,7 @@ void PassCommand::execute(Server &server, Client &client,
 
     if (params.empty() || params[0].empty())
     {
-        client.sendMessage(":server 461 " + displayName
-                           + " PASS :Not enough parameters\r\n");
+        client.sendMessage(":server 461 " + displayName + " PASS :Not enough parameters\r\n");
         return;
     }
 

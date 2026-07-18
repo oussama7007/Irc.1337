@@ -9,6 +9,5 @@ class PassCommand : public Command
         PassCommand();
         ~PassCommand();
 
-        void execute(Server &server, Client &client,
-                     const std::vector<std::string> &params);
+        void execute(Server &server, Client &client, const std::vector<std::string> &params);
 };

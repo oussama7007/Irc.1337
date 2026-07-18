@@ -25,8 +25,7 @@ class Bot
         void greetJoinedUser(const std::string &line);
 
     public:
-        Bot(const std::string &host, int port, const std::string &password,
-            const std::string &channel);
+        Bot(const std::string &host, int port, const std::string &password, const std::string &channel);
         ~Bot();
 
         void run();
