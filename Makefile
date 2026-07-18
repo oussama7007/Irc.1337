@@ -28,8 +28,7 @@ SRCS        = $(SRC_DIR)main.cpp \
               $(CMD_DIR)Nick.cpp \
               $(CMD_DIR)PartCommand.cpp \
               $(CMD_DIR)Pass.cpp \
-              $(CMD_DIR)PrivmsgCommand.cpp \
-              $(CMD_DIR)User.cpp
+              $(CMD_DIR)PrivmsgCommand.cpp $(CMD_DIR)User.cpp
 
 OBJS        = $(SRCS:.cpp=.o)
 

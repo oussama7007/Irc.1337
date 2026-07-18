@@ -133,3 +133,24 @@ user oussama 0 * :oussama
 أو كتعطي عدد القنوات كيساوي عدد اليوزرز (مثلاً: KICK #test1,#test2 user1,user2).
 أي حالة أخرى (مثلاً 2 قنوات و 3 ديال اليوزرز) كتعتبر خطأ (Syntax Error).
 ======================
+
+
+
+mode #k123s
+:mercury.libera.chat 324 salim #k123s +Cnst
+:mercury.libera.chat 329 salim #k123s 1784320775
+
+========================
+
+mode #a +k sa,id
+:server 482 oussama #a :You're not channel operator
+:said!~said@localhost MODE #a +k sa,id
+
+
+============================
+privmsg sbaxii,oussama waaaaaaaaa
+:server 401 said sbaxii,oussama :No such nick/channel
+
+
+
+==================
