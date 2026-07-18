@@ -219,7 +219,6 @@ void Server::setupCommands()
 	_commands["NICK"] = createNickCommand();
 	_commands["USER"] = createUserCommand();
 	_commands["JOIN"] = createJoinCommand();
-	_commands["PART"] = createPartCommand();
 	_commands["PRIVMSG"] = createPrivmsgCommand();
 	_commands["KICK"] = createKickCommand();
 	_commands["INVITE"] = createInviteCommand();
