@@ -154,3 +154,10 @@ privmsg sbaxii,oussama waaaaaaaaa
 MODE #one -k+k old_pass new_pass
 
 ==================
+
+
+
+
+
+// fnctl ila 7ayedtiha maghadich yhangi
+yes w | nc localhost 6667 // hadi fin kandir liha protection w fin kayena protection dyalhea ? 
