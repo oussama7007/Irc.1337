@@ -222,6 +222,10 @@ void Server::setupCommands()
 	_commands["TOPIC"] = createTopicCommand();
 	_commands["MODE"] = createModeCommand();
 }
+std::map<std::string, Channel*>& Server::getChannels()
+{
+    return _channels;
+}
 
 //oadouz
 void Server::run()
