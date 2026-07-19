@@ -87,6 +87,21 @@ For an old client, there is another table called the **TCP Established Hash Tabl
 
 ![Scene 5: TCP Established Fast Path](SVG/scene_5_fast_path.svg)
 
+### The DCC (Direct Client-to-Client) Magic
+
+Wait, if IRC is a client-server protocol, how do users send files to each other? Do they upload a 2GB file to our server, and we send it to the other client?
+**No!** That would completely choke our server's bandwidth and RAM.
+
+Instead, IRC uses a brilliant workaround called **DCC (Direct Client-to-Client)**. Here is how it bypasses the server for heavy lifting:
+
+1. **The Handshake (Via Server):** Client A wants to send a file to Client B. Client A sends a special `PRIVMSG` to Client B *through our server*. This message contains a CTCP (Client-To-Client Protocol) payload that looks something like this:
+   `PRIVMSG ClientB :\001DCC SEND filename IP_Address Port File_Size\001`
+2. **The Server's Role:** Our server doesn't know (or care) what this message means. It just acts as a router, forwarding the `PRIVMSG` to Client B exactly as it received it.
+3. **The Direct Connection (Bypassing the Server):** Client B parses this CTCP message, extracts Client A's IP address and Port, and opens a **direct TCP connection** to Client A. 
+4. **The Transfer:** The file is sent directly from Client A to Client B over this new socket. 
+
+Our server is completely out of the loop and uses zero resources for the actual file transfer! This is why DCC is so efficient: the IRC server merely acts as a matchmaker to exchange IPs and ports, while the heavy data transfer is strictly Peer-to-Peer (P2P).
+
 ### The Magic of `poll()`
 
 In our program, we call `poll()` on our file descriptors. The kernel uses the `fd` to find the main struct. Inside this struct, there is a Wait Queue (`sk_wq`).
