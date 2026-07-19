@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="804" height="604" viewBox="0 0 804 604" role="img" aria-labelledby="title desc">
+  <title id="title">Scene 1: The POSIX Barrier</title>
+  <desc id="desc">An autoplaying, looping explanation of user mode, the POSIX API, the kernel, and hardware isolation.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#0f172a" flood-opacity=".12"/></filter>
+    <clipPath id="clip"><rect x="2" y="2" width="800" height="600" rx="10"/></clipPath>
+    <style>
+      text{font-family:"Trebuchet MS",sans-serif;fill:#1e293b}.mono{font-family:"Courier New",monospace}.label{font-size:17px;font-weight:700;letter-spacing:2px}.card-title{font-size:18px;font-weight:700}.step{font-size:13px;font-weight:700;fill:#9333ea}.info{font-size:17px;font-weight:600}.path{fill:none;stroke-width:4;stroke-dasharray:1000;stroke-dashoffset:1000}.head{opacity:0}
+      #info-panel{opacity:0;animation:panel 18s infinite}#bad-path{animation:bad 18s infinite}#bad-end{animation:badend 18s infinite}#barrier{animation:barrier 18s infinite}#app{animation:appshake 18s infinite}#good-path-1{animation:good1 18s infinite}#good-head-1{animation:head1 18s infinite}#good-path-2{animation:good2 18s infinite}#good-head-2{animation:head2 18s infinite}
+      .i1{animation:i1 18s infinite}.i2{animation:i2 18s infinite}.i3{animation:i3 18s infinite}.i4{animation:i4 18s infinite}.i5{animation:i5 18s infinite}.i6{animation:i6 18s infinite}.i7{animation:i7 18s infinite}
+      @keyframes panel{0%,4%{opacity:0;transform:translateY(10px)}6%,96%{opacity:1;transform:translateY(0)}100%{opacity:0}}
+      @keyframes bad{0%,19%{stroke-dashoffset:1000}28%,43%{stroke-dashoffset:0}45%,100%{stroke-dashoffset:1000}}
+      @keyframes badend{0%,28%{opacity:0}30%,43%{opacity:1}45%,100%{opacity:0}}
+      @keyframes barrier{0%,27%{fill:#fff;filter:none}29%,43%{fill:#8b5cf6;filter:url(#shadow)}45%,100%{fill:#fff;filter:none}}
+      @keyframes appshake{0%,28%,33%,100%{transform:translateX(0)}29%,31%{transform:translateX(-4px)}30%,32%{transform:translateX(4px)}}
+      @keyframes good1{0%,49%{stroke-dashoffset:1000}58%,96%{stroke-dashoffset:0}100%{stroke-dashoffset:1000}}
+      @keyframes head1{0%,58%{opacity:0}60%,96%{opacity:1}100%{opacity:0}}
+      @keyframes good2{0%,69%{stroke-dashoffset:1000}78%,96%{stroke-dashoffset:0}100%{stroke-dashoffset:1000}}
+      @keyframes head2{0%,78%{opacity:0}80%,96%{opacity:1}100%{opacity:0}}
+      @keyframes i1{0%,4%{opacity:0}6%,18%{opacity:1}20%,100%{opacity:0}}@keyframes i2{0%,18%{opacity:0}20%,26%{opacity:1}28%,100%{opacity:0}}@keyframes i3{0%,26%{opacity:0}28%,43%{opacity:1}45%,100%{opacity:0}}@keyframes i4{0%,43%{opacity:0}45%,57%{opacity:1}59%,100%{opacity:0}}@keyframes i5{0%,57%{opacity:0}59%,68%{opacity:1}70%,100%{opacity:0}}@keyframes i6{0%,68%{opacity:0}70%,77%{opacity:1}79%,100%{opacity:0}}@keyframes i7{0%,77%{opacity:0}79%,96%{opacity:1}100%{opacity:0}}
+    </style>
+  </defs>
+  <rect x="1" y="1" width="802" height="602" rx="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+  <g clip-path="url(#clip)">
+    <rect x="2" y="2" width="800" height="260" fill="#eff6ff" fill-opacity=".55"/>
+    <rect x="2" y="262" width="800" height="340" fill="#f0fdf4" fill-opacity=".55"/>
+    <path d="M2 262H802" stroke="#94a3b8" stroke-width="3" stroke-dasharray="9 7"/>
+    <text x="22" y="34" class="label" fill="#3b82f6">USER_MODE</text>
+    <text x="22" y="576" class="label"><tspan fill="#10b981">KERNEL_MODE</tspan><tspan fill="#94a3b8"> / </tspan><tspan fill="#f43f5e">HARDWARE</tspan></text>
+    <g id="barrier">
+      <rect x="312" y="246" width="180" height="34" rx="17" fill="inherit" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="402" y="268" text-anchor="middle" class="mono" font-size="16" font-weight="700" fill="#7c3aed">POSIX-API</text>
+    </g>
+    <g id="app" filter="url(#shadow)"><rect x="302" y="82" width="220" height="100" rx="8" fill="#fff" stroke="#3b82f6" stroke-width="2"/><rect x="391" y="103" width="22" height="18" rx="2" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="m396 108 4 4-4 4m6 0h6" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="412" y="151" text-anchor="middle" class="card-title">Your Software</text></g>
+    <g filter="url(#shadow)"><rect x="102" y="382" width="220" height="100" rx="8" fill="#fff" stroke="#10b981" stroke-width="2"/><rect x="199" y="402" width="26" height="22" rx="3" fill="none" stroke="#10b981" stroke-width="2"/><path d="M205 397v5m8-5v5m-8 22v5m8-5v5m-19-20h5m-5 8h5m26-8h5m-5 8h5" stroke="#10b981" stroke-width="2"/><text x="212" y="451" text-anchor="middle" class="card-title">Kernel Core</text></g>
+    <g filter="url(#shadow)"><rect x="502" y="382" width="220" height="100" rx="8" fill="#fff" stroke="#f43f5e" stroke-width="2"/><circle cx="612" cy="405" r="4" fill="#f43f5e"/><circle cx="598" cy="420" r="4" fill="#f43f5e"/><circle cx="626" cy="420" r="4" fill="#f43f5e"/><path d="m609 409-8 8m14-8 8 8" stroke="#f43f5e" stroke-width="2"/><text x="612" y="451" text-anchor="middle" class="card-title">Hardware (NIC)</text></g>
+    <path id="bad-path" class="path" stroke="#ef4444" d="M412 182Q612 242 612 372"/><g id="bad-end" class="head"><polygon points="612,382 602,367 622,367" fill="#ef4444"/><path d="m597 247 30 30m0-30-30 30" stroke="#ef4444" stroke-width="6" stroke-linecap="round"/></g>
+    <path id="good-path-1" class="path" stroke="#3b82f6" d="M412 182Q212 242 212 372"/><polygon id="good-head-1" class="head" points="212,382 202,367 222,367" fill="#3b82f6"/>
+    <path id="good-path-2" class="path" stroke="#10b981" d="M322 432H492"/><polygon id="good-head-2" class="head" points="502,432 487,422 487,442" fill="#10b981"/>
+    <g id="info-panel" filter="url(#shadow)"><rect x="22" y="492" width="760" height="90" rx="8" fill="#fff"/><rect x="22" y="492" width="6" height="90" rx="3" fill="#8b5cf6"/>
+      <g class="i1"><text x="48" y="520" class="step">STEP 1:</text><text x="48" y="546" class="info"><tspan x="48">The Isolation Rule: User Mode has NO direct access to hardware</tspan><tspan x="48" dy="21">such as the NIC, CPU, or RAM.</tspan></text></g>
+      <g class="i2"><text x="48" y="520" class="step">STEP 2:</text><text x="48" y="550" class="info">Your software tries to communicate directly with the NIC...</text></g>
+      <g class="i3"><text x="48" y="520" class="step">STEP 3:</text><text x="48" y="546" class="info"><tspan x="48">ACCESS DENIED. The OS blocks it. The POSIX barrier prevents</tspan><tspan x="48" dy="21">unauthorized hardware access.</tspan></text></g>
+      <g class="i4"><text x="48" y="520" class="step">STEP 4:</text><text x="48" y="546" class="info"><tspan x="48">Instead, software uses POSIX syscalls such as socket()</tspan><tspan x="48" dy="21">and bind().</tspan></text></g>
+      <g class="i5"><text x="48" y="520" class="step">STEP 5:</text><text x="48" y="550" class="info">POSIX safely passes the request down to the Kernel.</text></g>
+      <g class="i6"><text x="48" y="520" class="step">STEP 6:</text><text x="48" y="546" class="info"><tspan x="48">The Kernel performs the low-level work with the NIC</tspan><tspan x="48" dy="21">on the application's behalf.</tspan></text></g>
+      <g class="i7"><text x="48" y="520" class="step">COMPLETE:</text><text x="48" y="550" class="info">This is why the Kernel completely manages network sockets.</text></g>
+    </g>
+  </g>
+</svg>
