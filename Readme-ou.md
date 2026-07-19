@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by oadouz, o-ait-si-.*
+*This project has been created as part of the 42 curriculum by oadouz, oait-si-.*
 
 # ft_irc - Internet Relay Chat
 
@@ -109,3 +109,4 @@ We don't just know *what* a socket is (a communication endpoint), we know exactl
 * **RFC 1459 / RFC 2812:** The official Internet Relay Chat protocol documentation.
 * **Linux Kernel Networking Documentation:** To understand the low-level behavior of TCP sockets, queues, and file descriptors.
 * **AI Usage:** Artificial Intelligence was utilized to format and structure this README, translate the core technical explanations of kernel-level networking (TCP Hash Tables, Wait Queues, and `poll` mechanics) into English, and correct minor low-level inaccuracies regarding routing to the Backlog vs. the Receive Buffer, all while preserving the original authors' logical flow, architectural breakdown, and conversational style.
+* **Reference Servers:** The server's parsing behavior and edge-case handling were actively tested and modeled after real-world standards by observing and strictly following the behaviors of Libera Chat and InspIRCd servers.
