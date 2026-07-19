@@ -6,8 +6,7 @@
 #include <stdexcept>
 #include <cctype>
 
-// "PASS :" and CRLF consume eight bytes, leaving 504 password bytes inside
-// one complete 512-byte IRC frame.
+
 static const std::size_t MAX_SERVER_PASSWORD_SIZE = 504;
 
 //oadouz
@@ -16,8 +15,7 @@ static bool parsePort(const char *rawArgument, int &portOut)
 	if (rawArgument == NULL || rawArgument[0] == '\0')
 		return false;
 
-	// I accept only decimal digits so spaces, signs, and suffixes cannot
-	// reach the numeric conversion as valid port input.
+
 	for (std::size_t i = 0; rawArgument[i] != '\0'; ++i)
 	{
 		if (!std::isdigit(static_cast<unsigned char>(rawArgument[i])))

@@ -13,11 +13,11 @@ class Channel
         std::vector<Client*>    _members;
         std::vector<Client*>    _operators; 
 
-        bool                    _isInviteOnly;      // mode +i
-        bool                    _topicRestricted;   // mode +t
+        bool                    _isInviteOnly;      
+        bool                    _topicRestricted;   
         
-        std::string             _password;          // mode +k 
-        size_t                  _userLimit;         // mode +l 
+        std::string             _password;         
+        size_t                  _userLimit;     
 
         std::vector<Client*>    _invitedClients;
 

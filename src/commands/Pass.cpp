@@ -21,7 +21,7 @@ void PassCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (!client.getNickname().empty())
         displayName = client.getNickname();
-e.
+
     if (client.hasPassOk())
     {
         client.sendMessage(":server 462 " + displayName + " :You may not reregister\r\n");

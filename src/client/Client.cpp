@@ -7,20 +7,15 @@
 #include <iostream>
 #include <stdexcept>
 
-// I cap queued output so one client that stops reading cannot grow the whole
-// server process without a bound.
+
 static const std::size_t MAX_SEND_BUFFER = 65536;
 
-// I keep enough aggregate space for several valid IRC messages received in one
-// TCP read while still bounding a client that never sends a newline.
 static const std::size_t MAX_RECV_BUFFER = 8192;
 
-// IRC messages are limited to 512 bytes on the wire, including the line ending.
 static const std::size_t MAX_IRC_MESSAGE_SIZE = 512;
 
-//oadouz
-// I validate the final wire frame in one place so no command can accidentally
-// send an oversized line or inject a second IRC message through control bytes.
+
+
 static bool isValidOutboundMessage(const std::string &message)
 {
 	if (message.empty() || message.size() > MAX_IRC_MESSAGE_SIZE)
@@ -191,8 +186,7 @@ bool Client::appendToRecvBuffer(const char *data, std::size_t length)
 
 	_recvBuffer.append(data, length);
 
-	// Without LF, 512 buffered bytes can no longer become a legal IRC frame
-	// because the required line ending would push it over the wire limit.
+
 	if (_recvBuffer.find('\n') == std::string::npos && _recvBuffer.size() >= MAX_IRC_MESSAGE_SIZE)
 		return false;
 
