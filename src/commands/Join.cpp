@@ -95,66 +95,57 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
         }
         return; 
     }
-    // 2. تقسيم القنوات
+ 
     std::vector<std::string> channels = splitString(params[0], ',');
     
-    // 3. تقسيم الباسوردات (إلى كانو)
+   
     std::vector<std::string> keys;
     if (params.size() > 1)
     {
         keys = splitString(params[1], ',');
     }
-
-    // 4. الدخول للقنوات وحدة بوحدة
     for (size_t i = 0; i < channels.size(); ++i)
     {
         std::string channelName = channels[i];
         
-        // ==========================================
-        // هنا حيدنا الرمز (?) وعوضناه بـ if/else ساهلة
-        // ==========================================
         std::string providedKey = "";
         
         if (i < keys.size())
         {
-            // إلى كان اليوزر عاطي باسورد لهاد القناة، غادي نجبدوه
             providedKey = keys[i];
         }
         else
         {
-            // إلى ماكانش عاطي باسورد، غادي نخليوه خاوي
             providedKey = "";
         }
-        // ==========================================
 
-        // التحقق من صحة الاسم
+
+
         if (!isValidChannelName(channelName))
         {
-            client.sendMessage(":server 476 " + client.getNickname() + " " + channelName + " :Invalid channel name\r\n");
+            client.sendMessage(":server 403 " + client.getNickname() + " " + channelName + " :No such channel\r\n");
             continue; 
         }   
         
         Channel *channel = server.findChannel(channelName);
         bool isNewChannel = false;
 
-        // إلى كانت القناة ماكايناش، كنكرييوها
+       
         if (channel == NULL)
         {
             channel = server.createChannel(channelName);
             isNewChannel = true;
-            channel->setTopicRestricted(true); // تفعيل +t الافتراضي
+            channel->setTopicRestricted(true);
         }
         else 
         {
-            // إلى كانت القناة ديجا كاينة، كنتأكدو من الشروط
-            
-            // منع الدخول المزدوج (يلا كان اليوزر ديجا لداخل، كنتجاهلوه)
+           
             if (channel->isMember(&client))
             {
                 continue; 
             }
 
-            // التأكد من الباسورد (+k)
+           
             if (!channel->getPassword().empty())
             {
                 if (channel->getPassword() != providedKey)
@@ -164,7 +155,7 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
                 }
             }
 
-            // التأكد من الدعوة (+i)
+        
             if (channel->isInviteOnly())
             {
                 if (!channel->isInvited(&client))
@@ -174,7 +165,7 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
                 }
             }
 
-            // التأكد من العدد المسموح (+l)
+        
             if (channel->getUserLimit() > 0)
             {
                 if (channel->getMembersCount() >= channel->getUserLimit())
@@ -185,9 +176,8 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
             }
         }
 
-        // 5. إدخال اليوزر للقناة
+    
         channel->addMember(&client);
-
         if (isNewChannel)
         {
             channel->addOperator(&client);
@@ -200,21 +190,21 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
             }
         }
 
-        // 6. إرسال رسائل النجاح (Broadcast)
+       
         std::string userPrefix = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost";
         std::string joinMsg = userPrefix + " JOIN :" + channelName + "\r\n";
 
         channel->broadcastMessage(joinMsg, &client); 
         client.sendMessage(joinMsg);
 
-        // إرسال المود الافتراضي يلا كانت القناة جديدة
+
         if (isNewChannel)
         {
             std::string modeMsg = ":server MODE " + channelName + " +t\r\n";
             client.sendMessage(modeMsg);
         }
 
-        // 7. إرسال الـ Topic
+   
         if (!channel->getTopic().empty())
         {
             client.sendMessage(":server 332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() + "\r\n");
@@ -224,7 +214,7 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
         //     client.sendMessage(":server 331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
         // }
             
-        // 8. إرسال قائمة الأسماء (NAMES)
+
         std::vector<Client*> members = channel->getMembers();
         std::string namesList = "";
         
@@ -237,7 +227,7 @@ void JoinCommand::execute(Server &server, Client &client, const std::vector<std:
             
             namesList += members[j]->getNickname();
             
-            // ما كنزيدوش ليسباس بعد آخر سمية
+ 
             if (j + 1 < members.size())
             {
                 namesList += " ";

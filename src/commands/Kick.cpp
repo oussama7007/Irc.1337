@@ -4,14 +4,14 @@
 #include "../include/Server.hpp"
 #include "../include/Client.hpp"
 #include "../include/Channel.hpp"
-#include <sstream> // ضرورية باش نقسمو بالفاصلة
+#include <sstream> 
 
-//si-hamou
+
 KickCommand::KickCommand() {}
-//si-hamou
+
 KickCommand::~KickCommand() {}
 
-// فانكشن التقسيم
+
 static std::vector<std::string> splitString(const std::string &str, char delimiter)
 {
     std::vector<std::string> tokens;
@@ -26,8 +26,7 @@ static std::vector<std::string> splitString(const std::string &str, char delimit
 }
 
 //si-hamou
-// Fix KICK so the issuer receives the successful KICK message too, and apply
-// the agreed list handling and IRC casemapping to channel and nickname targets.
+
 void KickCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.size() < 2)
@@ -36,7 +35,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
         return;
     }
 
-    // كنقسمو القنوات واليوزرز اللي جاو بالفاصلة
+
     std::vector<std::string> channels = splitString(params[0], ',');
     std::vector<std::string> users = splitString(params[1], ',');
     
@@ -46,17 +45,16 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
         reason = params[2];
     }
 
-    // حماية RFC 2812: إما قناة وحدة، أو عدد القنوات كيساوي عدد اليوزرز
+    
     if (channels.size() != 1 && channels.size() != users.size())
     {
-        client.sendMessage(":server 461 " + client.getNickname() + " KICK :Syntax error\r\n");
+        client.sendMessage(":server 461 " + client.getNickname() + " KICK :Not enough parameters\r\n");
         return;
     }
 
-    // كنمشيو على اليوزرز واحد بواحد
+  
     for (size_t i = 0; i < users.size(); ++i)
     {
-        // يلا كانت قناة وحدة، غنطبقوها على كلشي. يلا كانو بزاف، غناخدو القناة اللي مقابلة لليوزر
         std::string channelName = (channels.size() == 1) ? channels[0] : channels[i];
         std::string targetNick = users[i];
 
@@ -65,7 +63,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
         if (channel == NULL)
         {
             client.sendMessage(":server 403 " + client.getNickname() + " " + channelName + " :No such channel\r\n");
-            continue; // كندوزو لليوزر اللي موراه
+            continue; 
         }
 
         if (!channel->isMember(&client))
@@ -89,7 +87,7 @@ void KickCommand::execute(Server &server, Client &client, const std::vector<std:
 
         std::string msgToSend = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost KICK " + channelName + " " + targetNick + " :" + reason + "\r\n";
 
-        // كنصيفطو الميساج للقناة، وكنصيفطوه حتى للـ Operator اللي دار الكوماند
+ 
         channel->broadcastMessage(msgToSend, &client);
         client.sendMessage(msgToSend);        
         

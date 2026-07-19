@@ -2,8 +2,6 @@
 #include "../include/Server.hpp"
 #include "../include/Client.hpp"
 
-// Three failures give a normal client room to correct a typo while preventing
-// one anonymous socket from making unlimited password guesses.
 static const unsigned int MAX_FAILED_PASS_ATTEMPTS = 3;
 
 //oadouz
@@ -23,9 +21,7 @@ void PassCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (!client.getNickname().empty())
         displayName = client.getNickname();
-
-    // I reject PASS after it succeeds because authentication must not change
-    // after the client enters the registration state machine.
+e.
     if (client.hasPassOk())
     {
         client.sendMessage(":server 462 " + displayName + " :You may not reregister\r\n");

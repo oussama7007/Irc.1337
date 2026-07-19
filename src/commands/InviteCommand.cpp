@@ -63,7 +63,6 @@ void InviteCommand::execute(Server &server, Client &client, const std::vector<st
     targetClient->sendMessage(inviteMsg);
 }
 
-//si-hamou
 Command* createInviteCommand() 
 { 
     return new InviteCommand(); 

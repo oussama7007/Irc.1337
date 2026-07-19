@@ -32,6 +32,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
 
     if (params.size() == 1)
     {
+        
         std::string activeModes = "+";
         std::string modeArguments = "";
 
@@ -65,6 +66,21 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
     }
 
     std::string modeString = params[1];
+
+
+    for (size_t i = 0; i < modeString.length(); ++i)
+    {
+        char c = modeString[i];
+        if (c != '+' && c != '-' && c != 'i' && c != 't' && c != 'k' && c != 'l' && c != 'o')
+        {
+            if (std::isalpha(c)) 
+            {
+                client.sendMessage(":server 472 " + client.getNickname() + " " + std::string(1, c) + " :is not a recognised channel mode.\r\n");
+                return; 
+            }
+        }
+    }
+
     bool isPlus = true;
     size_t paramIndex = 2; 
 
@@ -118,6 +134,12 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 {
                     std::string key = params[paramIndex++];
                     
+                    if (key.find(' ') != std::string::npos || key.find('\t') != std::string::npos || key.find(',') != std::string::npos)
+                    {
+                        client.sendMessage(":server 696 " + client.getNickname() + " " + target + " k " + key + " :Invalid channel key (cannot contain spaces)\r\n");
+                        continue;
+                    }
+                    
                     if (channel->getPassword().empty())
                     {
                         channel->setPassword(key);
@@ -128,7 +150,6 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                     }
                     else
                     {
-                        // السيرفر كيرفض تغيير الباسورد مباشرة كيما كيقول الـ RFC
                         client.sendMessage(":server 467 " + client.getNickname() + " " + target + " :Channel key already set\r\n");
                     }
                 }
@@ -156,7 +177,23 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
             {
                 if (paramIndex < params.size()) 
                 {
-                    int limit = std::atoi(params[paramIndex++].c_str());
+                    std::string limitStr = params[paramIndex++];
+                    bool isValidNumber = true;
+
+                    for (size_t j = 0; j < limitStr.length(); ++j)
+                    {
+                        if (!std::isdigit(limitStr[j]))
+                        {
+                            isValidNumber = false;
+                            break;
+                        }
+                    }
+                    if (!isValidNumber || limitStr.empty())
+                    {
+                        client.sendMessage(":server 696 " + client.getNickname() + " " + target + " l " + limitStr + " :Invalid limit mode parameter. Syntax: <limit>.\r\n");
+                        continue; 
+                    }
+                    int limit = std::atoi(limitStr.c_str());
                     if (limit > 0 && channel->getUserLimit() != (size_t)limit)
                     {
                         channel->setUserLimit(limit);
@@ -212,13 +249,7 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
                 }
             }
         }
-        else
-        {
-            if (std::isalpha(c))
-            {
-                client.sendMessage(":server 472 " + client.getNickname() + " " + std::string(1, c) + " :is unknown mode char to me\r\n");
-            }
-        }
+        
     }
 
     if (!appliedModes.empty())
@@ -227,5 +258,4 @@ void ModeCommand::execute(Server &server, Client &client, const std::vector<std:
         channel->broadcastMessage(modeMsg);
     }
 }
-
 Command* createModeCommand() { return new ModeCommand(); }

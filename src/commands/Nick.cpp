@@ -2,8 +2,7 @@
 #include "../include/Server.hpp"
 #include "../include/Client.hpp"
 
-// RFC 2812 uses nine characters as the traditional nickname limit, so I keep
-// the validation rule named and visible instead of hiding the value in a check.
+
 static const std::size_t MAX_NICKNAME_LENGTH = 9;
 
 //oadouz
@@ -38,8 +37,7 @@ NickCommand::~NickCommand()
 }
 
 //oadouz
-// I validate params[0] before changing Client because a rejected NICK must not
-// leave half of the old identity and half of the requested identity behind.
+
 void NickCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
     if (params.empty() || params[0].empty())
@@ -76,8 +74,7 @@ void NickCommand::execute(Server &server, Client &client, const std::vector<std:
     if (wasRegistered && oldNickname != newNickname)
         server.broadcastNicknameChange(&client, oldNickname, newNickname);
 
-    // I check the previous state so a normal nickname change cannot send a
-    // second welcome reply to an already registered client.
+
     if (!wasRegistered && client.isRegistered())
     {
         client.sendMessage(":server 001 " + client.getNickname() + " :Welcome to the ft_irc Network, " + client.getNickname() + "!" + client.getUsername() + "@localhost\r\n");

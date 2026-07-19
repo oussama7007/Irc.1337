@@ -129,9 +129,7 @@ user al al al al
 
 user oussama 0 * :oussama 
 ===================
-إما كتعطي قناة وحدة و بزاف ديال اليوزرز (مثلاً: KICK #test user1,user2).
-أو كتعطي عدد القنوات كيساوي عدد اليوزرز (مثلاً: KICK #test1,#test2 user1,user2).
-أي حالة أخرى (مثلاً 2 قنوات و 3 ديال اليوزرز) كتعتبر خطأ (Syntax Error).
+
 ======================
 
 
@@ -151,7 +149,7 @@ mode #a +k sa,id
 privmsg sbaxii,oussama waaaaaaaaa
 :server 401 said sbaxii,oussama :No such nick/channel
 
-MODE #one -k+k old_pass new_pass
+
 
 ==================
 
