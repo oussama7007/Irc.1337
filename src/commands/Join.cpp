@@ -8,7 +8,7 @@ JoinCommand::JoinCommand() {}
 
 JoinCommand::~JoinCommand() {}
 
-// فانكشن التقسيم (كتقسم سترينغ بالفاصلة)
+
 static std::vector<std::string> splitString(const std::string &str, char delimiter)
 {
     std::vector<std::string> tokens;
@@ -25,7 +25,7 @@ static std::vector<std::string> splitString(const std::string &str, char delimit
     return tokens;
 }
 
-// التأكد من صحة اسم القناة
+
 static bool isValidChannelName(const std::string &name)
 {
     if (name.empty()) 
@@ -54,16 +54,47 @@ static bool isValidChannelName(const std::string &name)
     return true;
 }
     
-// تنفيذ الكوماند JOIN
+
 void JoinCommand::execute(Server &server, Client &client, const std::vector<std::string> &params)
 {
-    // 1. التأكد بلي اليوزر عطانا على الأقل سمية القناة
+  
     if (params.empty())
     {
         client.sendMessage(":server 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n");
         return;
     }
-
+    if (params[0] == "0")
+    {
+        std::map<std::string, Channel*> allChannels = server.getChannels();
+        std::map<std::string, Channel*>::iterator it;
+        
+        for (it = allChannels.begin(); it != allChannels.end(); ++it)
+        {
+            Channel *channel = it->second;
+            
+            if (channel->isMember(&client))
+            {
+                
+                std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PART " + channel->getName() + " :Left all channels\r\n";
+                
+             
+                channel->broadcastMessage(partMsg, &client);
+                
+                
+                client.sendMessage(partMsg);
+                
+               
+                channel->removeMember(&client);
+                
+              
+                if (channel->getMembersCount() == 0)
+                {
+                    server.removeChannel(channel->getName());
+                }
+            }
+        }
+        return; 
+    }
     // 2. تقسيم القنوات
     std::vector<std::string> channels = splitString(params[0], ',');
     

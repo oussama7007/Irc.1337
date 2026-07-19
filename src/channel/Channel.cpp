@@ -107,10 +107,6 @@ void Channel::removeInvited(Client *client)
         _invitedClients.erase(it);
 }
 
-
-
-
-
 size_t Channel::getMembersCount() const {    return _members.size(); }
 
 

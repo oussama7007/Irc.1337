@@ -53,4 +53,5 @@ class Server
                                                     const std::string &newNickname);
         Channel             *findChannel(const std::string &name);
         Channel             *createChannel(const std::string &name);
+        std::map<std::string, Channel*>& getChannels();
 };
